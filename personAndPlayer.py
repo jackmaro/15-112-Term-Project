@@ -1,5 +1,6 @@
 import random
 from main import *
+from cmu_graphics import *
 
 class person:
     def __init__(self,name,age):
@@ -10,7 +11,7 @@ class person:
         self.stamina = getHPStamByAge(self.age)
         self.conditions = []
 
-    def alterHPStam(self,hpVStam,hpStamChange):
+    def alterHPStam(self,hpVsStam,hpStamChange):
         if hpVsStam=="hp":
             self.health+=hpStamChange
             self.health%=getHPStamByAge(self.age)

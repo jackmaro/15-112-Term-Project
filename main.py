@@ -4,8 +4,8 @@ import string
 import random
 
 #importing from the individually organized files
-from personAndPlayer import *
 from screens import *
+from personAndPlayer import *
 from conditions import *
 
 

@@ -1,5 +1,6 @@
-import cmu_graphics
+from cmu_graphics import *
 from main import *
+import string
 
 #CODE FOR START SCREEN
 def gameStartScreen_redrawAll(app):
