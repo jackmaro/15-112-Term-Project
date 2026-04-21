@@ -36,12 +36,29 @@ class person:
         return self.name
     
 class player(person):
-    def __init__(self):
-        super().__init__()
-        player.inventory = []
-        player.occupation = None
+    def __init__(self,name,age):
+        super().__init__(name,age)
+        player.inventory = {'Oxen':0,'Wheels':0,'Tongues':0,'Axles':0, 'Ammo':0, 'Food':0}
+        player.profession = None
         player.currency = 0 #change this perhaps? upon initialization this should be random or hella if ur in godmode
     
+    def alterCurrency(self,amount):
+        newCurr = self.currency+amount
+        if newCurr>=0: #ie valid currency change
+            self.currency=newCurr
+            return True
+        else:
+            print("ur broke lol")
+            return None
+    
+    def alterInv(self,item,amount):
+        potentialAmt = self.inventory[item]+amount
+        if potentialAmt < 0:
+            print("Can't do that!")
+            return None
+        else:
+            self.inventory[item] = potentialAmt
+            return True
 
 
 def getHPStamByAge(age):

@@ -20,16 +20,15 @@ def onAppStart(app):
     app.prevScreenChoices = None
     app.learnDict = {"Professions":"These are different professions you can choose from to get different effects on your point value stuff later!"}
     
-
-#im mixed on where to put this.
-def chooseFromOptions(app,optionsList,learnKey,key):
+def chooseFromOptions(app,optionsList,functionsList,key):
     if key.isalpha(): return None
-    elif int(key) in range(len(optionsList)):
-        return optionsList[int(key)-1]
-    elif int(key)==len(optionsList):
-        return app.learnDict[learnKey]
-    else:
-        return None
+    elif int(key) in range(1,len(optionsList)+1):
+        newKey = int(key)-1
+        print(functionsList[newKey][1])
+        if type(functionsList[newKey][1])!=list:
+            functionsList[newKey][0](app,functionsList[newKey][1])
+        else:
+            functionsList[newKey][0](app,*functionsList[newKey][1])
 
 #DRAWING RELATED FUNCTIONS / VIEW FUNCTIONS
 def partyChoiceScreen_onAppStart(app): #lowkey will move this at some point

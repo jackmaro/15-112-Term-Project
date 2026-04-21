@@ -1,5 +1,7 @@
 from cmu_graphics import *
 from main import *
+from choicesFunctions import *
+from learn import *
 import string
 
 #CODE FOR START SCREEN
@@ -30,10 +32,12 @@ def playerNameScreen_onKeyPress(app,key):
         setActiveScreen("playerOccupationScreen")
         if app.playerName=="meow":
             app.godmode=True
-            #need to set up new game; perhaps should write helper for ts?
-            #user = player(app.playerName,"N",2) #for now you will always start as a YA enby bc pronouns are exhausting
+            app.player = player(app.playerName,2)
         if app.playerName=="Lauren" or app.playerName=="Kosbie":
             app.hardMode = True
+            app.player = player(app.playerName,4)
+        else:
+            app.player = player(app.playerName,2)
 
     
 #CODE FOR OCCUPATIONS SCREEN:
@@ -43,16 +47,9 @@ def playerOccupationScreen_redrawAll(app):
 
 def playerOccupationScreen_onKeyPress(app,key):
     professionsOptions = ["Banker", "Carpenter", "Farmer","Learn More"]
-    learnKey="Professions"
-    #fix ts later, lowk
-    if chooseFromOptions(app,professionsOptions,learnKey,key)!=None and chooseFromOptions(app,professionsOptions,learnKey,key)!="learn":
-        print("meow")    
-    elif chooseFromOptions(app,professionsOptions,learnKey,key)==1:
-        setActiveScreen("partyChoiceScreen")
-        pass #ask Nick abt the issue here; would like to have one big "learn" thing with a huge dictionary for each like "learn" thing
-    #
-#functionList... hmm contemplate ts
-
+    fnsList = [[applyProfession,"Banker"],[applyProfession,"Carpenter"],[applyProfession,"Farmer"],[learnMore,"professions"]]
+    chooseFromOptions(app,professionsOptions,fnsList,key)
+    
 def deathScreen_redrawAll(app):
     drawRect(0,0,app.width,app.height, fill="lightGray")
     drawLabel(f"You have died of {app.deathReason}",app.width//2, app.height//2,fill="red",bold=True)
