@@ -60,7 +60,7 @@ class player(person):
             self.inventory[item] = potentialAmt
             return True
 
-#helper function for 
+#helper function for getting HP/Stamina values
 def getHPStamByAge(age):
     hpStam = 50
     if age<=2:
