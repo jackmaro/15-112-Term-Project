@@ -1,5 +1,5 @@
-import random
-from main import *
+# import random
+# from main import *
 from cmu_graphics import *
 
 class person:
@@ -60,7 +60,7 @@ class player(person):
             self.inventory[item] = potentialAmt
             return True
 
-
+#helper function for 
 def getHPStamByAge(age):
     hpStam = 50
     if age<=2:
@@ -71,6 +71,8 @@ def getHPStamByAge(age):
         hpStam=150
     return hpStam
         
+
+#lowkey might want to move ts but this is fine for now
 def generateParty(app):
     if app.godmode==True:
         app.playerParty.append(person("",2)) # 1 young adult
@@ -78,8 +80,11 @@ def generateParty(app):
         for i in range(5):
             app.playerParty.append(person("",0)) #5 children
     else:
-        partyNumb = random.randrange(1,6)
+        partyNumb = randrange(1,6)
         for i in range(partyNumb):
-            age = random.randrange(5)
+            age = randrange(5)
             app.playerParty.append(person("",age))
     print(app.playerParty)
+
+def playerDeath(app):
+    pass

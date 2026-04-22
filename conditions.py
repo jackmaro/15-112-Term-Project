@@ -1,5 +1,3 @@
-from main import *
-
 class condition:
     def __init__(self,condtName,hpOrStam,phase):
         self.name = condtName

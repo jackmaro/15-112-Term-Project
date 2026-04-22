@@ -1,7 +1,9 @@
 from cmu_graphics import *
-from main import *
+# from main import *
+from optionsFns import *
 from choicesFunctions import *
 from learn import *
+from personAndPlayer import *
 import string
 
 #CODE FOR START SCREEN
@@ -50,6 +52,22 @@ def playerOccupationScreen_onKeyPress(app,key):
     fnsList = [[applyProfession,"Banker"],[applyProfession,"Carpenter"],[applyProfession,"Farmer"],[learnMore,"professions"]]
     chooseFromOptions(app,professionsOptions,fnsList,key)
     
+#CODE FOR PARTY NAME CHOICE SCREEN
+def partyChoiceScreen_onAppStart(app):
+    generateParty(app)
+
+#NEXT TO DO: WRITE THIS REDRAW ALL
+
+
+
+
+#CODE FOR MAP SCREEN
+def mapScreen_redrawAll(app):
+    #probably import a pixelart drawn thing here
+    #add a line over it showing where you've been'
+    pass
+
+#CODE FOR DEATH SCREEN
 def deathScreen_redrawAll(app):
     drawRect(0,0,app.width,app.height, fill="lightGray")
     drawLabel(f"You have died of {app.deathReason}",app.width//2, app.height//2,fill="red",bold=True)

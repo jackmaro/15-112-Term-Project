@@ -1,8 +1,8 @@
-from main import *
+# from main import *
 from personAndPlayer import *
-from conditions import *
+#from conditions import *
 from cmu_graphics import *
-
+from optionsFns import *
 
 def applyProfession(app,profession):
     if profession=="Banker":
@@ -20,3 +20,4 @@ def applyProfession(app,profession):
         app.player.alterCurrency(400)
         print("You're a Farmer now!")
         setActiveScreen("partyNamingScreen")
+
