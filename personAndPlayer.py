@@ -86,5 +86,34 @@ def generateParty(app):
             app.playerParty.append(person("",age))
     print(app.playerParty)
 
+
+def drawHPStamBars(app):
+    #i have 133 to work with. margins vertical are 11. blocks for text+bars=50 so 15 for name + 17 per bar
+    startX, startY = 25,11
+    party = [app.player]+app.playerParty
+    barLength = 100
+    barWidth = 35
+    for i in range(len(party)):
+        barSX = startX+((i+1)//3)*(barLength+25)
+        barSY = startY+15+(i%2)*(barWidth+11)
+        labelSY =startY+((i+1)//2)*(barWidth)
+        midLineY=barSY+17.5
+        drawRect(barSX,barSY,barLength,barWidth, fill="lightGray") #hp bar, unfilled
+        drawRect(barSX,barSY+17.5,barLength,barWidth, fill="lightGray") #stamina bar, unfilled
+        drawLine(barSX,barSY,barSX+barLength,barSY,fill="gray")
+        drawLabel(f'{party[i].name}',barSX,barSY,align="left-top",size=15)
+        percentHP = party[i].health/getHPStamByAge(party[i].age)
+        percentStam = party[i].stamina/getHPStamByAge(party[i].age)
+        drawRect(barSX,barSY,barLength*percentHP,barWidth, fill="green") #hp bar, unfilled
+        drawRect(barSX,barSY+17.5,barLength*percentStam,barWidth, fill="yellow") #stamina bar, unfilled
+    pass
+
+def drawInv(app):
+    drawLabel(f'{app.player.currency}',app.width-1,app.height//3+11,align="right-top")
+    cX, cY = app.width-22,app.height//3+12
+    drawCircle(cX,cY,10,fill="yellow",border="black")
+    pass
+
+
 def playerDeath(app):
     pass

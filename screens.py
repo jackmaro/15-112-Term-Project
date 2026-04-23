@@ -29,7 +29,17 @@ def gameStartScreen_onMousePress(app,mouseX,mouseY):
 #perhaps refashion this below into a "skip" button
 def gameStartScreen_onKeyPress(app, key):
     if key=="s":
-        setActiveScreen("playerNameScreen")
+        app.playerName="Meow"
+        app.player = player(app.playerName,2)
+        app.godmode=True
+        app.playerParty = []
+        app.player.alterInv("Oxen",8)
+        app.player.alterInv("Wheels",4)
+        app.player.alterInv("Tongues",3)
+        app.player.alterInv("Axles",3)
+        app.player.alterInv("Ammo",5000)
+        app.player.alterInv("Food",5000)
+        setActiveScreen("hpAndInvScreen") #can change as desired for debugging
 
 
 
@@ -129,7 +139,7 @@ def journeyStart_onScreenActivate(app):
 
 def journeyStart_redrawAll(app):
     drawRect(0,0,app.width,app.height,fill="black")
-    drawLabel(f"And now, my good {app.playerName}, your journey begins...",app.width/2, app.height/2)
+    drawLabel(f"And now, my good {app.playerName}, your journey begins...",app.width/2, app.height/2,fill="white")
 
 
 
@@ -141,8 +151,15 @@ def shopScreen_redrawAll(app):
     pass
 
 #CODE FOR SHOW HEALTH AND SUCH
-def healthScreen_redrawAll(app):
+def hpAndInvScreen_onScreenActivate(app):
     pass
+
+def hpAndInvScreen_redrawAll(app):
+    drawRect(0,0,app.width, app.height//3,fill="gray")
+    drawLabel("Current Party Health", app.width//2,20,size=16,bold=True)
+    drawHPStamBars(app)
+    drawInv(app)
+
 
 def travelScreen_redrawAll(app):
     pass
