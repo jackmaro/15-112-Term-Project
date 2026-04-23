@@ -4,11 +4,11 @@ from optionsFns import *
 from choicesFunctions import *
 from learn import *
 from personAndPlayer import *
+from travelFns import *
 import string
 
 #CODE FOR START SCREEN
 def ontoNameScreen(app):
-    print("Meow")
     setActiveScreen("playerNameScreen")
 
 def gameStartScreen_onScreenActivate(app):
@@ -21,7 +21,6 @@ def gameStartScreen_redrawAll(app):
 
 def gameStartScreen_onMousePress(app,mouseX,mouseY):
     if app.startButton.isIn(mouseX,mouseY):
-        print("meow")
         setActiveScreen("playerNameScreen")
     #if app.startButton.isIn(mouseX,mouseY):
     #    app.startButton.runFn(app)
@@ -39,7 +38,7 @@ def gameStartScreen_onKeyPress(app, key):
         app.player.alterInv("Axles",3)
         app.player.alterInv("Ammo",5000)
         app.player.alterInv("Food",5000)
-        setActiveScreen("hpAndInvScreen") #can change as desired for debugging
+        setActiveScreen("shop") #can change as desired for debugging
 
 
 
@@ -52,7 +51,7 @@ def playerNameScreen_redrawAll(app):
     drawLabel("But first...", app.width//2,app.height/5)
     drawLabel("What should we call you?", app.width//2, app.height/3, bold=True, size=16)
     if app.playerName=="":
-        drawLabel("<Type your name here>",app.width//2,app.height/2)
+        drawLabel("<Type your name!>",app.width//2,app.height/2)
     else:
         drawLabel(f'{app.playerName}',app.width//2,app.height/2)
 
@@ -131,11 +130,41 @@ def partyNamingScreen_onKeyPress(app,key):
             app.selectedPM-=1
     elif key=='enter' and ("" not in partyNames):
         print("In here!")
-        setActiveScreen("journeyStart")
+        setActiveScreen("shop")
+
+#CODE FOR SHOP SCREEN:
+def shop_onScreenActivate(app):
+    pass
+
+def shop_redrawAll(app):
+    #nts: food is 20 cents per pound so we're doing 1 buck per 5 pounds; similarly water is 1 per 2 L, ammo is 2 per 20 ammos, 
+    beginningPrices={'Oxen':30,'Wheels':10,'Tongues':10,'Axles':10, 'Ammo':2, 'Food':1,'Clothes':10,'Water':1}
+    if app.milesTraveled==0:
+        drawShop(app,"Matt's General Shop",beginningPrices)
+
+#CONTEMPLATE THE BUTTONS AND THIS ENTIRE MECHANIC LOWK
+def drawShop(app,shopName,pricesDict):
+    drawRect(0,0,app.width,app.height/3+20,fill="burlyWood") #approx 153
+    drawLabel(f"{shopName}", app.width//2, 15,size=20,bold=True,align="bottom")
+    drawLine(0,20,app.width,20,fill="black",lineWidth=1)
+    itemsList = ["Oxen","Wheels","Tongues", "Axles","Food","Water","Clothes", "Ammo"]
+    itemsMeasure = ["yoke","wheel","tongue","axle","pound","liter","set","20"]
+    for i in range(len(itemsList)):
+         row, col = i//4, i%4
+         cellLX, cellTY = 50+85*col,30+60*row
+         drawRect(cellLX,cellTY,80,50,fill=None,border="black")
+         drawLabel(f'{itemsList[i]}',cellLX+5,cellTY+5,align="top-left",size=10)
+         drawLabel(f'''${pricesDict[itemsList[i]]} per {itemsMeasure[i]}''',cellLX+5,cellTY+40,align="left",size=10)
+         
 
 #CODE FOR JOURNEY BEGIN SCREEN?
 def journeyStart_onScreenActivate(app):
+    app.pace = 12 #miles/day; base and does not drain stamina
+    app.foodRations = 3 #pounds/day, per person
+    app.daysPassed = 0 
+    app.milesTraveled = 0
     pass
+
 
 def journeyStart_redrawAll(app):
     drawRect(0,0,app.width,app.height,fill="black")
@@ -143,20 +172,10 @@ def journeyStart_redrawAll(app):
 
 
 
-
-#CODE FOR SHOP SCREEN
-
-#CODE FOR SHOW INVENTORY?
-def shopScreen_redrawAll(app):
-    pass
-
 #CODE FOR SHOW HEALTH AND SUCH
 def hpAndInvScreen_onScreenActivate(app):
     pass
-
 def hpAndInvScreen_redrawAll(app):
-    drawRect(0,0,app.width, app.height//3,fill="gray")
-    drawLabel("Current Party Health", app.width//2,20,size=16,bold=True)
     drawHPStamBars(app)
     drawInv(app)
 

@@ -10,6 +10,7 @@ class person:
         self.happiness = 100
         self.stamina = getHPStamByAge(self.age)
         self.conditions = []
+        self.status = "alive"
 
     def alterHPStam(self,hpVsStam,hpStamChange):
         if hpVsStam=="hp":
@@ -107,6 +108,9 @@ def drawHPStamCell(app,i):
     drawRect(cellLX,cellTY+34.5,100*percentStam,15,fill="yellow") #stamina bar itself
     drawRect(cellLX,cellTY+17,100,15,fill=None,border="gray") #hp bar outline
     drawRect(cellLX,cellTY+34.5,100,15,fill=None,border="gray") #stamina bar outline
+    if partyMemb.status=="dead":
+        drawLine(cellLX,cellTY,cellLX+100,cellTY+50,fill="red")
+
 
 def drawInv(app):
     drawRect(0,153,app.width,187,fill="sienna")
