@@ -38,7 +38,7 @@ def gameStartScreen_onKeyPress(app, key):
         app.player.alterInv("Axles",3)
         app.player.alterInv("Ammo",5000)
         app.player.alterInv("Food",5000)
-        setActiveScreen("shop") #can change as desired for debugging
+        setActiveScreen("choices") #can change as desired for debugging
 
 
 
@@ -54,7 +54,6 @@ def playerNameScreen_redrawAll(app):
         drawLabel("<Type your name!>",app.width//2,app.height/2)
     else:
         drawLabel(f'{app.playerName}',app.width//2,app.height/2)
-
 def playerNameScreen_onKeyPress(app,key):
     if key=='backspace' and len(app.playerName)!=0:
         app.playerName = app.playerName[:-1]
@@ -75,14 +74,12 @@ def playerNameScreen_onKeyPress(app,key):
 #CODE FOR OCCUPATIONS SCREEN:
 def playerOccupationScreen_onScreenActivate(app):
     pass
-
 def playerOccupationScreen_redrawAll(app):
     professionsOptions = ["Banker", "Carpenter", "Farmer","Learn More"]
     drawOptions(app,professionsOptions)
-
 def playerOccupationScreen_onKeyPress(app,key):
     professionsOptions = ["Banker", "Carpenter", "Farmer","Learn More"]
-    fnsList = [[applyProfession,"Banker"],[applyProfession,"Carpenter"],[applyProfession,"Farmer"],[learnMore,"professions"]]
+    fnsList = [[applyProfession,[app,"Banker"]],[applyProfession,[app,"Carpenter"]],[applyProfession,[app,"Farmer"]],[learnMore,[app,"professions"]]]
     chooseFromOptions(app,professionsOptions,fnsList,key)
     
 #CODE FOR PARTY NAME CHOICE SCREEN
@@ -103,7 +100,6 @@ def partyNamingScreen_redrawAll(app):
             drawLabel(f'{i+1}. {partyNames[i]}',10,yCoord,align='left',size=20,fill=color,bold=boldOrNot) #magic number core teehee
         else:
             drawLabel(f'{i+1}. <Type Stuff Here!>',10,yCoord,align='left',size=20,fill=color, bold=boldOrNot) #partially for debugging, but also for 
-
 
 def partyNamingScreen_onKeyPress(app,key):
     partyNames = [app.player.name]+[item.name for item in app.playerParty]
@@ -159,9 +155,9 @@ def drawShop(app,shopName,pricesDict):
 
 #CODE FOR JOURNEY BEGIN SCREEN?
 def journeyStart_onScreenActivate(app):
-    app.pace = 12 #miles/day; base and does not drain stamina
-    app.foodRations = 3 #pounds/day, per person
-    app.daysPassed = 0 
+    app.pace = 9 #miles/day; is the "steady" and does not drain stamina unless food bad ?
+    app.foodRations = 3 #pounds/day, per person; water is 2 Liters/day per person
+    app.days = 0 
     app.milesTraveled = 0
     pass
 
@@ -170,7 +166,64 @@ def journeyStart_redrawAll(app):
     drawRect(0,0,app.width,app.height,fill="black")
     drawLabel(f"And now, my good {app.playerName}, your journey begins...",app.width/2, app.height/2,fill="white")
 
+def choices_onScreenActivate(app):
+    app.chosen = None
 
+def choices_redrawAll(app):
+    drawRect(0,0,app.width,app.height,fill="lightGray")
+    optionsList = ["Continue Traveling","Check Map", "Check Party", "Change Pace", "Change Food Rations","Rest", "Trade"]
+    if app.chosen==None:
+        drawOptions(app,optionsList)
+    else:
+        drawMenuOption(app)
+
+def choices_onKeyPress(app,key):
+    print(key)
+    if key=='escape':
+        app.chosen=None
+    else:
+        optionsList = ["Continue Traveling","Check Map","Check Party", "Change Pace", "Change Food Rations","Rest", "Trade"]
+        fnsList = [[travel,app],[checkMap,app],[checkParty,app],[changePace,app],[changeFood,app],[rest,app],[trade,app]]
+        chooseFromOptions(app,optionsList,fnsList,key)
+
+def drawMenuOption(app):
+    pass
+
+def travel(app):
+    app.chosen="travel"
+    pass
+def checkMap(app):
+    app.chosen="map"
+    setActiveScreen("mapScreen")
+
+def checkParty(app):
+    app.chosen="party"
+    setActiveScreen("hpAndInvScreen")
+
+def changePace(app):
+    app.chosen = "pace"
+    paces = ["9 Miles/Day (Steady)","12 Miles/Day (Tiresome)","15 Miles/Day (Grueling)"]
+    drawOptions(app,paces)
+    pass
+
+def changeFood(app):
+    app.chosen="food"
+    pass
+
+def rest(app):
+    app.chosen = "rest"
+    app.days+=1
+    stamRegenRate = 24-app.pace
+    partyRegen(app,"stam",stamRegenRate)
+    dayPass(app)
+    app.milesTraveled-= math.floor(getTruePace(app)) #bc dayPass does this automatically
+
+def trade(app):
+    app.chosen = "trade"
+    pass
+
+def partyRegen(app,hpOrStam,rateOfRegen):
+    pass
 
 #CODE FOR SHOW HEALTH AND SUCH
 def hpAndInvScreen_onScreenActivate(app):
@@ -178,16 +231,29 @@ def hpAndInvScreen_onScreenActivate(app):
 def hpAndInvScreen_redrawAll(app):
     drawHPStamBars(app)
     drawInv(app)
+def hpAndInvScreen_onKeyPress(app,key):
+    if key=='escape':
+        setActiveScreen("choices")
 
 
 def travelScreen_redrawAll(app):
     pass
 
 #CODE FOR MAP SCREEN
+def mapScreen_onScreenActivate(app):
+    pass
+
 def mapScreen_redrawAll(app):
+    drawRect(0,0,app.width,app.height,fill="pink")
     #probably import a pixelart drawn thing here
     #add a line over it showing where you've been'
     pass
+
+def mapScreen_onKeyPress(app,key):
+    if key=='escape':
+        app.chosen=None
+        setActiveScreen("choices")
+
 
 
 #CODE FOR DEATH SCREEN
