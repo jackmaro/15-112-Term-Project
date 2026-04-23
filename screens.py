@@ -32,7 +32,7 @@ def gameStartScreen_onKeyPress(app, key):
         app.playerName="Meow"
         app.player = player(app.playerName,2)
         app.godmode=True
-        app.playerParty = []
+        app.playerParty = [app.player,person("Olivia",2),person("Jacob",3), person("JJ",3),person("JK",4)]
         app.player.alterInv("Oxen",8)
         app.player.alterInv("Wheels",4)
         app.player.alterInv("Tongues",3)

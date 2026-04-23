@@ -74,6 +74,7 @@ def getHPStamByAge(age):
 
 #lowkey might want to move ts but this is fine for now
 def generateParty(app):
+    app.playerParty.append(app.player)
     if app.godmode==True:
         app.playerParty.append(person("",2)) # 1 young adult
     elif app.hardMode==True:
@@ -88,30 +89,29 @@ def generateParty(app):
 
 
 def drawHPStamBars(app):
-    #i have 133 to work with. margins vertical are 11. blocks for text+bars=50 so 15 for name + 17 per bar
-    startX, startY = 25,11
-    party = [app.player]+app.playerParty
-    barLength = 100
-    barWidth = 35
-    for i in range(len(party)):
-        barSX = startX+((i+1)//3)*(barLength+25)
-        barSY = startY+15+(i%2)*(barWidth+11)
-        labelSY =startY+((i+1)//2)*(barWidth)
-        midLineY=barSY+17.5
-        drawRect(barSX,barSY,barLength,barWidth, fill="lightGray") #hp bar, unfilled
-        drawRect(barSX,barSY+17.5,barLength,barWidth, fill="lightGray") #stamina bar, unfilled
-        drawLine(barSX,barSY,barSX+barLength,barSY,fill="gray")
-        drawLabel(f'{party[i].name}',barSX,barSY,align="left-top",size=15)
-        percentHP = party[i].health/getHPStamByAge(party[i].age)
-        percentStam = party[i].stamina/getHPStamByAge(party[i].age)
-        drawRect(barSX,barSY,barLength*percentHP,barWidth, fill="green") #hp bar, unfilled
-        drawRect(barSX,barSY+17.5,barLength*percentStam,barWidth, fill="yellow") #stamina bar, unfilled
-    pass
+    app.playerParty
+    drawRect(0,0,app.width,app.height/3+20,fill="lightGray") 
+    drawLabel("Party Stats", app.width//2, 12.5,size=15,bold=True,align="bottom")
+    drawLine(25,20,app.width-25,20,fill="black",lineWidth=1)
+    for i in range(len(app.playerParty)):
+        drawHPStamCell(app,i)
+    
+def drawHPStamCell(app,i):
+    partyMemb = app.playerParty[i]
+    boldOrNot = True if i==0 else False
+    percentHP, percentStam = partyMemb.health/getHPStamByAge(partyMemb.age),partyMemb.health/getHPStamByAge(partyMemb.age) 
+    row, col = i//3, i%3
+    cellLX, cellTY = 25+125*col,33+57*row
+    drawLabel(f'{app.playerParty[i].name}',cellLX+2.5,cellTY+2.5,align="top-left",size=12,bold=boldOrNot,fill="gray")
+    drawRect(cellLX,cellTY+17,100*percentHP,15,fill="green") #hp bar itself
+    drawRect(cellLX,cellTY+34.5,100*percentStam,15,fill="yellow") #stamina bar itself
+    drawRect(cellLX,cellTY+17,100,15,fill=None,border="gray") #hp bar outline
+    drawRect(cellLX,cellTY+34.5,100,15,fill=None,border="gray") #stamina bar outline
 
 def drawInv(app):
-    drawLabel(f'{app.player.currency}',app.width-1,app.height//3+11,align="right-top")
-    cX, cY = app.width-22,app.height//3+12
-    drawCircle(cX,cY,10,fill="yellow",border="black")
+    #drawLabel(f'{app.player.currency}',app.width-1,app.height//3+11,align="right-top")
+    #cX, cY = app.width-22,app.height//3+12
+    #drawCircle(cX,cY,10,fill="yellow",border="black")
     pass
 
 

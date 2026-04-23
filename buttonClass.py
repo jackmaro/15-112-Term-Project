@@ -1,6 +1,6 @@
 from cmu_graphics import *
 
-
+#This code is grounded in what Lauren coded in lecture on Tuesday April 21st.
 class button:
     def __init__(self,cX,cY,width,height,fn,label,color):
         self.cX = cX
