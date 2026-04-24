@@ -16,6 +16,18 @@ def animateMan(app):
     if app.manX==-50:
         app.manX=app.width+50
 
+def travButton(app):
+    toBeTraveled = rounded(app.pace*(app.player.inventory["Oxen"]/4))
+    closestLM = getNearestLM(app)
+    print(closestLM.miles <= toBeTraveled+app.milesTraveled)
+    if (closestLM.miles <= toBeTraveled+app.milesTraveled) and (closestLM.name!="Oregon City"):
+        app.milesTraveled=closestLM.miles
+        app.atLM=True
+    else:
+        app.atLM=False
+        app.milesTraveled+=toBeTraveled
+    dayPass(app,True)
+
 def drawTravelScreenBottom(app):
     drawRect(0,160,app.width,240,fill="burlyWood")
     drawRect(0,150,app.width,10,fill="saddleBrown")
@@ -25,8 +37,7 @@ def drawTravelScreenBottom(app):
     drawLabel(f"Miles Left on Trail: {app.milesOfTrail-app.milesTraveled} miles",12.5,210,size=20,align="left-top")
     drawLabel(f"Next Landmark: {getNearestLM(app).name}",12.5,240,size=20,align="left-top")
     drawLabel(f"Miles to Next Landmark: {getNearestLM(app).miles-app.milesTraveled} miles",12.5,270,size=20,align="left-top")
-    drawLabel(f"Food Remaining: {app.player.inventory["Food"]} lbs",12.5,300,size=20,align="left-top")
-    drawLabel(f"Water Remaining: {app.player.inventory["Water"]} liters",12.5,330,size=20,align="left-top")
-    #drawLine(app.width//2,0,app.width//2,app.height,fill="black")
+    drawLabel(f"Food Remaining: {app.player.inventory['Food']} lbs",12.5,300,size=20,align="left-top")
+    drawLabel(f"Water Remaining: {app.player.inventory['Water']} liters",12.5,330,size=20,align="left-top")
     for butt in app.travelButtons:
         butt.draw()

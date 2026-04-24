@@ -28,7 +28,7 @@ def makePurchase(player,item,amt,priceDict):
 def sellBack(player,item,amt,priceDict):
     price = priceDict[item]
     if player.alterInv(item,-1*amt)==True:
-        player.alterCurrency(price)
+        player.alterCurrency(price*amt)
     
 def generatePriceDict(priceDict):
     newPD = dict()

@@ -1,44 +1,19 @@
 from cmu_graphics import *
 from otClasses import *
+from otClassFns import *
 
 
 def getTruePace(app):
-    return (app.player.inventory["Oxen"]/4)*app.pace
+    return (app.player.inventory["Oxen"]//4)*app.pace
 
 def ageFolksUp(app):
     for folk in app.playerParty:
         folk.ageUp()
 
-def checkForDeath(app):
-    checkHPStam(app)
-    pass
-    
-
-
-#revisit bc this is unneccessary
-def checkHPStam(app):
-    died = []
-    for folk in app.playerParty:
-        if folk.health<=0:
-            died.append(folk)
-            partyDeath(folk,"no health")
-        elif folk.stam<=0:
-            died.append(folk)
-            partyDeath(folk,"exhaustion")
-    return died
-
-def partyDeath(folk,reason):
-    print(f"{folk.name} has died of {reason}.")
-    folk.status="dead"
-        
-#party functions
-    #party eats
-    
-    #roll for broken bones
 def applyHumanPartyFunctions(app,foodConsumed,waterConsumed):
     if app.player.inventory["Food"]<foodConsumed:
         app.player.inventory["Food"]=0
-        #apply party damage ahh fn (app,5)
+        partyStatusChange("hp",)
     else:
         app.player.alterInv("Food",-foodConsumed)
     #party drinks
@@ -47,9 +22,10 @@ def applyHumanPartyFunctions(app,foodConsumed,waterConsumed):
         app.player.inventory["Water"]=0
         rollForWaterDiseases(app,litersNeeded) 
     else:
-        app.player.alterInv["Water",-waterConsumed]
+        app.player.alterInv("Water",-waterConsumed)
     #age up
-    if app.days%25==0:
+    if app.days%25==0 and app.days!=0:
+        print("Happy Birthday!")
         for pm in app.playerParty:
             pm.ageUp()
             if pm.health>getHPStamByAge(pm.age):
@@ -71,8 +47,10 @@ def rollForWaterDiseases(litersNeeded): #this is applied randomly to someone in 
     choleraThreshold = 2*litersNeeded
     rollRes = randrange(1,101)
     if rollRes<=dysentaryThreshold:
+        print("Dysentary!")
         pass
     if rollRes<=choleraThreshold:
+        print("Cholera!")
         pass
 
 def rollForBrokenBones(app,folk): #this is by person
@@ -88,5 +66,6 @@ def rollForBrokenBones(app,folk): #this is by person
     elif folk.age==4: thresh*=4
     rollRes = randrange(1,101)
     if rollRes<=thresh:
+        print("broken bone!")
         bb =condition("Broken Bone","stam",1) #stage tbd
         folk.addCondition(bb)

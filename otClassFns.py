@@ -34,8 +34,19 @@ def generateParty(app):
         #    age = randrange(5)
         #    app.playerParty.append(person("",age))
 
-def playerDeath(app):
-    pass
+def partyStatusChange(app,hpOrStam,rateOfRegen):
+    for folk in app.playerParty:
+        folk.alterHPStam(hpOrStam,rateOfRegen)
+        if (rateOfRegen<0) and (folk.checkDeath()!=None): #short circuits if gaining health
+            applyDeath(app,folk,folk.checkDeath())
+
+def applyDeath(app,folk,reason):
+    if folk==app.player:
+        pass
+    else:
+        pass
+
+
 
 
 #========================================================
@@ -45,10 +56,8 @@ def playerDeath(app):
 def getNearestLM(app):
     currClosest = landmark(None,None)
     for lm in app.landmarks:
-        if lm.miles<app.milesTraveled:
-            continue
-        else:
-            if (currClosest.miles==None) or lm.miles<currClosest.miles:
+        if (lm.miles>app.milesTraveled) and ((currClosest.miles==None) or lm.miles<currClosest.miles):
                 currClosest = lm
+    print(currClosest.name,currClosest.miles)
     return currClosest
 

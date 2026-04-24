@@ -1,18 +1,20 @@
 from cmu_graphics import *
 from otClasses import *
+from otClassFns import*
 from survivalHelpers import *
 import math
 
-#THIS IS WHAT I'M WORKING ON NOW
+
 def dayPass(app,travelOrNot):
+    if travelOrNot:
+        stamLoss = rounded(getTruePace(app)*0.5)
+        partyStatusChange(app,"stam",-stamLoss)
+        rollForBrokenPieces(app)
+
     foodConsumed = app.foodRations*len(app.playerParty)
     waterConsumed = len(app.playerParty)*2 #2 liters per day
     applyHumanFunctions(app,foodConsumed,waterConsumed)
-
-    if travelOrNot:
-        truePace = getTruePace(app)
-        #nearestLM = getNearestLM(app)
-        app.milesTraveled+= math.floor(getTruePace(app)) 
+    app.days+=1
 
     
 def applyHumanFunctions(app,foodConsumed,waterConsumed):
@@ -32,9 +34,3 @@ def rollForBrokenPieces(app):
         #death by no wagon
         pass
 
-
-
-
-
-
-    #need new temperature (if time)

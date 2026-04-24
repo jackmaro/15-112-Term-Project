@@ -32,13 +32,17 @@ def gameStartScreen_onKeyPress(app, key):
         app.player = player(app.playerName,2)
         app.godmode=True
         app.milesTraveled = 10
-        app.atLM=True
+        app.atLM=False
+        app.foodRations = 3
+        app.pace=9
         app.playerParty = [app.player,person("Olivia",2),person("Jacob",3), person("JJ",3),person("JK",4)]
-        app.playerParty[3].alterHPStam("hp",-30)
+        app.playerParty[3].alterHPStam("hp",-100)
         app.player.alterInv("Oxen",8)
         app.player.alterInv("Wheels",4)
         app.player.alterInv("Tongues",3)
         app.player.alterInv("Axles",3)
+        app.player.alterInv("Food",300)
+        app.player.alterInv("Water",300)
         setActiveScreen("travelScreen") #can change as desired for debugging
 #helper for button
 def ontoNameScreen(app):
@@ -208,8 +212,8 @@ def choices_onKeyPress(app,key):
                 optionsList = ["Travel","Check Map", "Check Party", "Change Pace", "Change Food Rations","Rest", "Shop"]
                 fnsList = [[travel,app],[checkMap,app],[checkParty,app],[changePace,app],[changeFood,app],[rest,app],[shop,app]]
             else:
-                optionsList = ["Continue Traveling","Check Map","Check Party", "Change Pace", "Change Food Rations","Rest", "Hunt"]
-                fnsList = [[travel,app],[checkMap,app],[checkParty,app],[changePace,app],[changeFood,app],[rest,app],[hunt,app]]
+                optionsList = ["Continue Traveling","Check Map","Check Party", "Change Pace", "Change Food Rations","Rest"]
+                fnsList = [[travel,app],[checkMap,app],[checkParty,app],[changePace,app],[changeFood,app],[rest,app]]
         if app.chosenOptions!=None:
             optionsList = app.chosenOptions
             fnsList = app.chosenFns
@@ -244,7 +248,7 @@ def travelScreen_onScreenActivate(app):
     app.manX = 360
     app.landmarks = [landmark("Fort Hall",0),landmark("Fort Boise",rounded(app.milesOfTrail*0.4)),landmark("Blue Mountains",rounded(app.milesOfTrail*0.65)),landmark("The Dalles",rounded(app.milesOfTrail*0.8))]
     app.btmFromTravButton = button(75,360,115,35,setActiveScreen,"choices","Back to Options","burlyWood","saddleBrown",10)
-    app.travDayButton = button(210,360,115,35,setActiveScreen,"choices","Travel a Day","burlyWood","saddleBrown",10)
+    app.travDayButton = button(210,360,115,35,travButton,app,"Travel a Day","burlyWood","saddleBrown",10)
     app.travelButtons = [app.btmFromTravButton,app.travDayButton]
 
 def travelScreen_onMousePress(app,mouseX,mouseY):
