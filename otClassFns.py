@@ -47,7 +47,7 @@ def applyDeath(app,folk,reason):
     if folk==app.player:
         playerDeath(app,reason)
     else:
-        app.puQueue=popUp(f'''{folk} has died of {reason} :( ''')
+        app.puQueue.append(popUp(f'''{folk} has died of {reason} :( '''))
         app.playerParty.remove(folk)
 
 def playerDeath(app,reason):

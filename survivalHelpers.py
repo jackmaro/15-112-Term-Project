@@ -4,7 +4,7 @@ from otClassFns import *
 
 
 def getTruePace(app):
-    return rounded(app.player.inventory["Oxen"]/6)*app.pace
+    return max(rounded(app.player.inventory["Oxen"]/6)*app.pace,1)
 
 def ageFolksUp(app):
     for folk in app.playerParty:
@@ -20,7 +20,6 @@ def applyHumanPartyFunctions(app,foodConsumed,waterConsumed):
         hpGain = app.foodRations*4
         partyStatusChange(app,"hp",hpGain)
         app.player.alterInv("Food",-foodConsumed)
-    #party drinks
     if app.player.inventory["Water"]<waterConsumed:
         litersNeeded = waterConsumed-app.player.inventory["Water"]
         app.player.inventory["Water"]=0
@@ -29,7 +28,7 @@ def applyHumanPartyFunctions(app,foodConsumed,waterConsumed):
         app.player.alterInv("Water",-waterConsumed)
     #age up
     if app.days%25==0 and app.days!=0:
-        app.puQueue.append("Happy Birthday! (Your party aged up)")
+        app.puQueue.append(popUp("Happy Birthday! (Your party aged up)"))
         for pm in app.playerParty:
             pm.ageUp()
             if pm.health>getHPStamByAge(pm.age):
@@ -43,22 +42,21 @@ def applyByPMFunctions(app):
 
 
 
-
-#DISEASES AND CONDITIONS AND SUCH    
-
+#DISEASES!!! :D  
 def rollForWaterDiseases(app, litersNeeded): #this is applied randomly to someone in the party
     dysentaryThreshold = 2.5*litersNeeded
     choleraThreshold = 2*litersNeeded
     rollRes = randrange(1,101)
     if rollRes<=dysentaryThreshold:
-        app.puQueue.append("Your party has dysentery. Wuh-Oh.")
+        app.puQueue.append(popUp("Your party has dysentery. Wuh-Oh."))
         partyStatusChange(app,"hp",-125,"dysentery")
     if rollRes<=choleraThreshold:
-        app.puQueue.append("Your party has cholera. Choler-me stoked!")
+        app.puQueue.append(popUp("Your party has cholera."))
         partyStatusChange(app,"hp",-100,"cholera")
 
+
 def rollForBrokenBones(app,folk): #this is by person
-    thresh = 3
+    thresh = 1
     #modifier change from pace!
     if app.pace==15: thresh *= 2
     elif app.pace==12: thresh *= 1.5

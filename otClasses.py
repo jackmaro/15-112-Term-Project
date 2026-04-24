@@ -4,7 +4,6 @@ from cmu_graphics import *
 #========================================================
 #BUTTON CLASS
 #========================================================
-
 #Note: This code is grounded in what Lauren coded in lecture on Tuesday April 21st.
 class button:
     def __init__(self,leftX,topY,width,height,fn,fnParams,label,color,border="black",textSize=16):
@@ -126,7 +125,7 @@ class landmark:
 
 
 #========================================================
-#CONDITION CLASS
+#CONDITION CLASS (scrapped)
 #========================================================
 class condition:
     def __init__(self,condtName,hpOrStam,phase):

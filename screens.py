@@ -15,6 +15,17 @@ def returnToChoices(app):
 #========================================================
 def gameStartScreen_onScreenActivate(app):
     app.startButton = button(app.width//2-50,app.height//2+20,100,50,setActiveScreen,"playerNameScreen","START","skyBlue")
+    app.milesTraveled = 0
+    app.days = 0
+    app.milesOfTrail = 445
+    app.atLM=False
+    app.playerName = ""
+    app.playerParty = []
+    app.puQueue = []
+    app.godmode = False
+    app.hardMode = False
+    app.journeyStarted=False
+
 
 def gameStartScreen_redrawAll(app):
     drawRect(0,0,app.width,app.height,fill="wheat")
@@ -25,17 +36,16 @@ def gameStartScreen_onMousePress(app,mouseX,mouseY):
     if app.startButton.isIn(mouseX,mouseY):
         setActiveScreen("playerNameScreen")
 
-#the so called god-mode function (s to skip)
+#the fun grading guy
 def gameStartScreen_onKeyPress(app, key):
-    if key=="s":
-        app.playerName="Meow"
+    if key=="w": #about to win
+        app.playerName="James"
         app.player = player(app.playerName,2)
-        app.godmode=True
         app.milesTraveled = 440
         app.atLM=False
         app.foodRations = 3
         app.pace=9
-        app.playerParty = [app.player,person("Olivia",2),person("Jacob",3), person("JJ",3),person("JK",4)]
+        app.playerParty = [app.player,person("Olivia",2),person("Jacob",3), person("Benson",3),person("Grace",4)]
         app.playerParty[3].alterHPStam("hp",-100)
         app.player.alterInv("Oxen",8)
         app.player.alterInv("Wheels",4)
@@ -43,6 +53,19 @@ def gameStartScreen_onKeyPress(app, key):
         app.player.alterInv("Axles",3)
         app.player.alterInv("Food",300)
         app.player.alterInv("Water",300)
+        setActiveScreen("travelScreen") #can change as desired for debugging
+#helper for button
+    if key=="l": #about to die
+        app.playerName="James"
+        app.player = player(app.playerName,2)
+        app.player.alterHPStam("hp",-200)
+        app.milesTraveled = 100
+        app.atLM=False
+        app.foodRations = 0
+        app.pace=9
+        app.playerParty = [app.player,person("Olivia",2),person("Jacob",3), person("JJ",3),person("JK",4)]
+        app.playerParty[3].alterHPStam("hp",-200)
+        app.player.alterInv("Oxen",2)
         setActiveScreen("travelScreen") #can change as desired for debugging
 #helper for button
 def ontoNameScreen(app):
@@ -211,9 +234,9 @@ def choices_redrawAll(app):
     drawLabel("Menu",app.width//2,25,size=20,bold=True)
     drawLine(0,50,app.width,50,fill="black")
     if app.milesTraveled==0 or (app.atLM==True):
-        optionsList = ["Travel", "Check Map", "Check Party", "Change Pace", "Change Food Rations", "Rest", "Shop"]
+        optionsList = ["Travel", "Check Party", "Change Pace", "Change Food Rations", "Rest", "Shop"]
     else:
-        optionsList = ["Continue Traveling","Check Map", "Check Party", "Change Pace", "Change Food Rations","Rest"]
+        optionsList = ["Continue Traveling", "Check Party", "Change Pace", "Change Food Rations","Rest"]
     if app.chosenOptions==None:
         drawOptions(app,optionsList)
     else:
@@ -225,11 +248,11 @@ def choices_onKeyPress(app,key):
     else:
         if app.chosenOptions==None:
             if app.milesTraveled==0:
-                optionsList = ["Travel","Check Map", "Check Party", "Change Pace", "Change Food Rations","Rest", "Shop"]
-                fnsList = [[travel,app],[checkMap,app],[checkParty,app],[changePace,app],[changeFood,app],[rest,app],[shop,app]]
+                optionsList = ["Travel", "Check Party", "Change Pace", "Change Food Rations","Rest", "Shop"]
+                fnsList = [[travel,app],[checkParty,app],[changePace,app],[changeFood,app],[rest,app],[shop,app]]
             else:
-                optionsList = ["Continue Traveling","Check Map","Check Party", "Change Pace", "Change Food Rations","Rest"]
-                fnsList = [[travel,app],[checkMap,app],[checkParty,app],[changePace,app],[changeFood,app],[rest,app]]
+                optionsList = ["Continue Traveling","Check Party", "Change Pace", "Change Food Rations","Rest"]
+                fnsList = [[travel,app],[checkParty,app],[changePace,app],[changeFood,app],[rest,app]]
         if app.chosenOptions!=None:
             optionsList = app.chosenOptions
             fnsList = app.chosenFns
@@ -264,14 +287,14 @@ def travelScreen_redrawAll(app):
 
 def travelScreen_onScreenActivate(app):
     app.runningPopUps = False
-    app.landmarks = [landmark("Fort Hall",0),landmark("Fort Boise",rounded(app.milesOfTrail*0.4)),landmark("Blue Mountains",rounded(app.milesOfTrail*0.65)),landmark("The Dalles",rounded(app.milesOfTrail*0.8))]
+    app.landmarks = [landmark("Fort Hall",0),landmark("Fort Boise",rounded(app.milesOfTrail*0.4)),landmark("Blue Mountains",rounded(app.milesOfTrail*0.65)),landmark("The Dalles",rounded(app.milesOfTrail*0.8)),landmark("Oregon City",app.milesOfTrail)]
     app.btmFromTravButton = button(75,360,115,35,setActiveScreen,"choices","Back to Options","burlyWood","saddleBrown",10)
     app.travDayButton = button(210,360,115,35,travButton,app,"Travel a Day","burlyWood","saddleBrown",10)
     app.travelButtons = [app.btmFromTravButton,app.travDayButton]
 
 def travelScreen_onMousePress(app,mouseX,mouseY):
     for butt in app.travelButtons:
-        if butt.isIn(mouseX,mouseY):
+        if butt.isIn(mouseX,mouseY) and not(app.runningPopUps):
             butt.runFn()
 
 def travelScreen_onKeyPress(app,key):
@@ -304,7 +327,7 @@ def deathScreen_onScreenActivate(app):
 
 def deathScreen_redrawAll(app):
     drawRect(0,0,app.width,app.height, fill="gray")
-    drawLabel(f"You have died of {app.deathReason}",app.width//2, app.height//2-40,fill="red",bold=True)
+    drawLabel(f"You have died of {app.deathReason}",app.width//2, app.height//2-40,fill="red",bold=True,size=20)
     app.dsButton.draw()
 
 def deathScreen_onMousePress(app,mouseX,mouseY):
@@ -319,9 +342,11 @@ def winScreen_onScreenActivate(app):
     pass
 
 def winScreen_redrawAll(app):
-    drawRect(0,0,app.width,app.height,fill="lightGray")
-    drawLabel(f"Congratulations, {app.playerName}.",app.width//2,100,size=20,fill="yellow")
-    drawLabel("You have conquered the Oregon Trail!!",app.width//2,200, size=20,fill="yellow",bold=True)
+    drawRect(0,0,app.width,app.height,fill="burlyWood")
+    drawLabel(f"Congratulations, {app.playerName}.",app.width//2,150,size=20,fill="saddleBrown")
+    drawLabel("You have conquered the Oregon Trail!!",app.width//2,200, size=20,fill="saddleBrown",bold=True)
+    app.winScreenButton.draw()
+
 
 def winScreen_onMousePress(app,mouseX,mouseY):
     if app.winScreenButton.isIn(mouseX,mouseY):

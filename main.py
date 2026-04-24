@@ -7,16 +7,6 @@ def main():
 def onAppStart(app):
     app.width=400
     app.height=400
-    app.milesTraveled = 0
-    app.days = 0
-    app.milesOfTrail = 445
-    app.atLM=False
-    app.playerName = ""
-    app.playerParty = []
-    app.puQueue = []
-    app.godmode = False
-    app.hardMode = False
-    app.journeyStarted=False
     
 
 main()

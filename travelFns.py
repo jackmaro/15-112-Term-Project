@@ -35,7 +35,7 @@ def rollForBrokenPieces(app):
     if rollRes<=thresh:
         possPieces = ["Wheels","Tongues","Axles"]
         pieceBroken = possPieces[randrange(0,3)]
-        if app.player.inventory[pieceBroken]<0:
+        if app.player.inventory[pieceBroken]<=0:
             playerDeath(app,"broken wagon")
         else:
             app.puQueue.append(popUp(f'''One of the {pieceBroken} broke! You fix it.'''))
