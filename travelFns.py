@@ -1,7 +1,5 @@
 from cmu_graphics import *
-from buttonClass import *
-from personAndPlayer import *
-from conditions import *
+from otClasses import *
 from survivalHelpers import *
 import math
 

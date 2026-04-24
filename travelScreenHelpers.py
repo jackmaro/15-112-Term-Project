@@ -1,46 +1,8 @@
 from cmu_graphics import *
 from cmu_cpcs_utils import rounded
 from travelFns import *
-
-
-class button:
-    def __init__(self,leftX,topY,width,height,fn,label,color,border="black",textSize=16):
-        self.lX = leftX
-        self.tY = topY
-        self.width = width
-        self.height = height
-        self.label = label
-        self.color = color
-        self.fn = fn
-        self.borderCol = border
-        self.tSize = textSize
-    
-    def draw(self):
-        cX, cY = self.lX+self.width//2, self.tY + self.height//2
-        drawRect(self.lX, self.tY, self.width, self.height,fill=self.color,border=self.borderCol)
-        drawLabel(self.label, cX,cY,bold=True,size=self.tSize)
-    
-    def isIn(self,xCoord,yCoord):
-        rX,bY = self.lX+self.width, self.tY+self.height
-        return (self.lX<=xCoord<=rX) and (self.tY<=yCoord<=bY)
-        
-    def runFn(self,app):
-        self.fn(app)
-
-class landmark:
-    def __init__(self,name,mileage):
-        self.name=name
-        self.miles=mileage
-
-def getNearestLM(app):
-    currClosest = landmark(None,None)
-    for lm in app.landmarks:
-        if lm.miles<app.milesTraveled:
-            continue
-        else:
-            if (currClosest.miles==None) or lm.miles<currClosest.miles:
-                currClosest = lm
-    return currClosest
+from otClasses import *
+from otClassFns import *
 
 def drawTravelScreenTop(app):
     drawRect(0,0,app.width,150,fill="skyBlue")

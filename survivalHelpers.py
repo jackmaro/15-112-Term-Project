@@ -1,5 +1,5 @@
 from cmu_graphics import *
-from personAndPlayer import *
+from otClasses import *
 
 
 def getTruePace(app):
