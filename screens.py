@@ -32,6 +32,7 @@ def gameStartScreen_onKeyPress(app, key):
         app.player = player(app.playerName,2)
         app.godmode=True
         app.playerParty = [app.player,person("Olivia",2),person("Jacob",3), person("JJ",3),person("JK",4)]
+        app.playerParty[3].alterHPStam("hp",-30)
         app.player.alterInv("Oxen",8)
         app.player.alterInv("Wheels",4)
         app.player.alterInv("Tongues",3)
@@ -47,7 +48,7 @@ def playerNameScreen_onScreenActivate(app):
     pass
 
 def playerNameScreen_redrawAll(app):
-    drawLabel("Welcome to the Oregon Trail!! ADD DESCRIPTION STUFF LATER",app.width//2, app.height/8)
+    drawLabel("Hello Traveler! Welcome to the Oregon Trail!",app.width//2, app.height/8)
     drawLabel("But first...", app.width//2,app.height/5)
     drawLabel("What should we call you?", app.width//2, app.height/3, bold=True, size=16)
     if app.playerName=="":
@@ -90,7 +91,7 @@ def partyNamingScreen_onScreenActivate(app):
     app.selectedPM = 1
 
 def partyNamingScreen_redrawAll(app):
-    partyNames = [app.player.name]+[item.name for item in app.playerParty]
+    partyNames = [item.name for item in app.playerParty]
     screenLength = app.height-app.height/6
     for i in range(len(partyNames)):
         yCoord = app.height/6 + i*screenLength/len(partyNames)
@@ -102,7 +103,7 @@ def partyNamingScreen_redrawAll(app):
             drawLabel(f'{i+1}. <Type Stuff Here!>',10,yCoord,align='left',size=20,fill=color, bold=boldOrNot) #partially for debugging, but also for 
 
 def partyNamingScreen_onKeyPress(app,key):
-    partyNames = [app.player.name]+[item.name for item in app.playerParty]
+    partyNames = [item.name for item in app.playerParty]
     print("" in partyNames)
     if key.isdigit():
         newKey = int(key)-1
@@ -113,10 +114,10 @@ def partyNamingScreen_onKeyPress(app,key):
         if len(partyNames[app.selectedPM])<8:
             print(app.selectedPM)
             print(app.playerParty)
-            currPM = app.playerParty[app.selectedPM-1]
+            currPM = app.playerParty[app.selectedPM]
             currPM.changeName(currPM.name+key)
     elif key=='backspace':
-        currPM = app.playerParty[app.selectedPM-1]
+        currPM = app.playerParty[app.selectedPM]
         currPM.changeName(currPM.name[:-1])
     elif key=='down':
         if app.selectedPM<(len(partyNames)-1):
@@ -130,13 +131,19 @@ def partyNamingScreen_onKeyPress(app,key):
 
 #CODE FOR SHOP SCREEN:
 def shop_onScreenActivate(app):
-    pass
+    app.shopButtons = []
 
 def shop_redrawAll(app):
     #nts: food is 20 cents per pound so we're doing 1 buck per 5 pounds; similarly water is 1 per 2 L, ammo is 2 per 20 ammos, 
     beginningPrices={'Oxen':30,'Wheels':10,'Tongues':10,'Axles':10, 'Ammo':2, 'Food':1,'Clothes':10,'Water':1}
     if app.milesTraveled==0:
-        drawShop(app,"Matt's General Shop",beginningPrices)
+        drawShop(app,"Jack's General Shop",beginningPrices)
+    drawInv(app)
+
+def shop_onKeyPress(app,key):
+    if key=="right" and app.milesTraveled==0:
+        setActiveScreen("journeyStart")
+
 
 #CONTEMPLATE THE BUTTONS AND THIS ENTIRE MECHANIC LOWK
 def drawShop(app,shopName,pricesDict):
@@ -150,8 +157,7 @@ def drawShop(app,shopName,pricesDict):
          cellLX, cellTY = 50+85*col,30+60*row
          drawRect(cellLX,cellTY,80,50,fill=None,border="black")
          drawLabel(f'{itemsList[i]}',cellLX+5,cellTY+5,align="top-left",size=10)
-         drawLabel(f'''${pricesDict[itemsList[i]]} per {itemsMeasure[i]}''',cellLX+5,cellTY+40,align="left",size=10)
-         
+         drawLabel(f'''${pricesDict[itemsList[i]]} per {itemsMeasure[i]}''',cellLX+5,cellTY+40,align="left",size=10)         
 
 #CODE FOR JOURNEY BEGIN SCREEN?
 def journeyStart_onScreenActivate(app):
@@ -159,71 +165,70 @@ def journeyStart_onScreenActivate(app):
     app.foodRations = 3 #pounds/day, per person; water is 2 Liters/day per person
     app.days = 0 
     app.milesTraveled = 0
+    def sJourneyButtonPress(app):
+        setActiveScreen("choices")
+    app.startJourneyButton = button(app.width/2,app.height/2+30,100,50,sJourneyButtonPress,"Press to begin your Travels!","blue")
     pass
 
 
 def journeyStart_redrawAll(app):
     drawRect(0,0,app.width,app.height,fill="black")
     drawLabel(f"And now, my good {app.playerName}, your journey begins...",app.width/2, app.height/2,fill="white")
+    app.startJourneyButton.draw()
+
+def journeyStart_onMousePress(app,mouseX,mouseY):
+    if app.startJourneyButton.isIn(mouseX,mouseY):
+        app.startJourneyButton.runFn(app)
+
 
 def choices_onScreenActivate(app):
-    app.chosen = None
+    app.chosenOptions = None
 
 def choices_redrawAll(app):
     drawRect(0,0,app.width,app.height,fill="lightGray")
-    optionsList = ["Continue Traveling","Check Map", "Check Party", "Change Pace", "Change Food Rations","Rest", "Trade"]
-    if app.chosen==None:
+    if app.milesTraveled==0:
+        optionsList = ["Travel", "Check Map", "Check Party", "Change Pace", "Change Food Rations", "Rest", "Shop"]
+    else:
+        optionsList = ["Continue Traveling","Check Map", "Check Party", "Change Pace", "Change Food Rations","Rest", "Hunt"]
+    if app.chosenOptions==None:
         drawOptions(app,optionsList)
     else:
-        drawMenuOption(app)
+        drawOptions(app,app.chosenOptions)
 
 def choices_onKeyPress(app,key):
     print(key)
     if key=='escape':
-        app.chosen=None
+        app.chosenOptions=None
     else:
-        optionsList = ["Continue Traveling","Check Map","Check Party", "Change Pace", "Change Food Rations","Rest", "Trade"]
-        fnsList = [[travel,app],[checkMap,app],[checkParty,app],[changePace,app],[changeFood,app],[rest,app],[trade,app]]
+        if app.chosenOptions==None:
+            if app.milesTraveled==0:
+                optionsList = ["Travel","Check Map", "Check Party", "Change Pace", "Change Food Rations","Rest", "Shop"]
+                fnsList = [[travel,app],[checkMap,app],[checkParty,app],[changePace,app],[changeFood,app],[rest,app],[shop,app]]
+            else:
+                optionsList = ["Continue Traveling","Check Map","Check Party", "Change Pace", "Change Food Rations","Rest", "Hunt"]
+                fnsList = [[travel,app],[checkMap,app],[checkParty,app],[changePace,app],[changeFood,app],[rest,app],[hunt,app]]
+        if app.chosenOptions!=None:
+            optionsList = app.chosenOptions
+            fnsList = app.chosenFns
         chooseFromOptions(app,optionsList,fnsList,key)
 
-def drawMenuOption(app):
+
+def shop(app):
+    app.chosen="shop"
+    setActiveScreen(shop)
+
+def hunt(app):
     pass
 
-def travel(app):
-    app.chosen="travel"
-    pass
-def checkMap(app):
-    app.chosen="map"
-    setActiveScreen("mapScreen")
+def partyStatusChange(app,hpOrStam,rateOfRegen):
+    for folk in app.playerParty:
+        folk.alterHPStam(hpOrStam,rateOfRegen)
+        if (rateOfRegen<0) and (folk.checkDeath()!=None): #short circuits if gaining health
+            applyDeath(app,folk,folk.checkDeath())
 
-def checkParty(app):
-    app.chosen="party"
-    setActiveScreen("hpAndInvScreen")
-
-def changePace(app):
-    app.chosen = "pace"
-    paces = ["9 Miles/Day (Steady)","12 Miles/Day (Tiresome)","15 Miles/Day (Grueling)"]
-    drawOptions(app,paces)
+def applyDeath(app,folk,reason):
     pass
 
-def changeFood(app):
-    app.chosen="food"
-    pass
-
-def rest(app):
-    app.chosen = "rest"
-    app.days+=1
-    stamRegenRate = 24-app.pace
-    partyRegen(app,"stam",stamRegenRate)
-    dayPass(app)
-    app.milesTraveled-= math.floor(getTruePace(app)) #bc dayPass does this automatically
-
-def trade(app):
-    app.chosen = "trade"
-    pass
-
-def partyRegen(app,hpOrStam,rateOfRegen):
-    pass
 
 #CODE FOR SHOW HEALTH AND SUCH
 def hpAndInvScreen_onScreenActivate(app):
@@ -260,4 +265,8 @@ def mapScreen_onKeyPress(app,key):
 def deathScreen_redrawAll(app):
     drawRect(0,0,app.width,app.height, fill="lightGray")
     drawLabel(f"You have died of {app.deathReason}",app.width//2, app.height//2,fill="red",bold=True)
+    drawLabel(f'Press r to return to the start menu!', app.width//2, app.height//2+30, fill="black", bold=True)
 
+def deathScreen_onKeyPress(app,key):
+    if key=="r":
+        setActiveScreen("gameStartScreen")

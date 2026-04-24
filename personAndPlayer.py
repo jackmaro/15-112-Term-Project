@@ -14,11 +14,15 @@ class person:
 
     def alterHPStam(self,hpVsStam,hpStamChange):
         if hpVsStam=="hp":
-            self.health+=hpStamChange
-            self.health%=getHPStamByAge(self.age)
+            if self.health+hpStamChange<=getHPStamByAge(self.age):
+                self.health+=hpStamChange
+            else:
+                self.health=getHPStamByAge(self.age)
         elif hpVsStam=="stam":
-            self.stamina+=hpStamChange
-            self.stamina%=getHPStamByAge(self.age)
+            if self.stamina+hpStamChange<=getHPStamByAge(self.age):
+                self.stamina+=hpStamChange
+            else:
+                self.stamina=getHPStamByAge(self.age)
 
     def addCondition(self,condt):
         self.conditions.append(condt)
@@ -33,6 +37,12 @@ class person:
     def changeName(self,newName):
         self.name=newName
     
+    def checkDeath(self):
+        if self.health<=0:
+            return "no health"
+        elif self.stamina<=0:
+            return "exhaustion"
+
     def __repr__(self):
         return self.name
     
