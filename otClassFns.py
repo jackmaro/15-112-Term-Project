@@ -3,7 +3,6 @@ from otClasses import *
 
 
 
-
 #========================================================
 # Person and Player Special Functions
 #========================================================
@@ -29,11 +28,11 @@ def generateParty(app):
         for i in range(5):
             app.playerParty.append(person("",0)) #5 children
     else:
-        partyNumb = randrange(1,6)
-        for i in range(partyNumb):
-            age = randrange(5)
-            app.playerParty.append(person("",age))
-    print(app.playerParty)
+        app.playerParty.append(person("",2)) #for debugging
+        #partyNumb = randrange(1,6)
+        #for i in range(partyNumb):
+        #    age = randrange(5)
+        #    app.playerParty.append(person("",age))
 
 def playerDeath(app):
     pass

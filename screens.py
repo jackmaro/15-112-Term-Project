@@ -14,12 +14,12 @@ def returnToChoices(app):
 #FULL GAME START SCREEN
 #========================================================
 def gameStartScreen_onScreenActivate(app):
-    app.startButton = button(app.width//2-50,app.height//2+20,100,50,ontoNameScreen,"START!","blue")
+    app.startButton = button(app.width//2-50,app.height//2+20,100,50,setActiveScreen,"playerNameScreen","START","skyBlue")
 
 def gameStartScreen_redrawAll(app):
-    drawLabel("The Oregon Trail", app.width//2, app.height//6, bold=True,size=30)
+    drawRect(0,0,app.width,app.height,fill="wheat")
+    drawLabel("The Oregon Trail", app.width//2, app.height//4+50, bold=True,size=42.5)
     app.startButton.draw()
-    drawLabel("Press 's' to start!", app.width//2, app.height/4, bold=True)
 
 def gameStartScreen_onMousePress(app,mouseX,mouseY):
     if app.startButton.isIn(mouseX,mouseY):
@@ -31,14 +31,14 @@ def gameStartScreen_onKeyPress(app, key):
         app.playerName="Meow"
         app.player = player(app.playerName,2)
         app.godmode=True
+        app.milesTraveled = 10
+        app.atLM=True
         app.playerParty = [app.player,person("Olivia",2),person("Jacob",3), person("JJ",3),person("JK",4)]
         app.playerParty[3].alterHPStam("hp",-30)
         app.player.alterInv("Oxen",8)
         app.player.alterInv("Wheels",4)
         app.player.alterInv("Tongues",3)
         app.player.alterInv("Axles",3)
-        app.player.alterInv("Ammo",5000)
-        app.player.alterInv("Food",5000)
         setActiveScreen("travelScreen") #can change as desired for debugging
 #helper for button
 def ontoNameScreen(app):
@@ -52,13 +52,13 @@ def playerNameScreen_onScreenActivate(app):
     pass
 
 def playerNameScreen_redrawAll(app):
-    drawLabel("Hello Traveler! Welcome to the Oregon Trail!",app.width//2, app.height/8)
-    drawLabel("But first...", app.width//2,app.height/5)
+    drawLabel("Hello Traveler,",app.width//2, app.height/8,size=30,align="right")
+    drawLabel("Today you embark on a gruesome journey from Fort Hall, Wyoming to Oregon City.", app.width//2,app.height/5,size=16)
     drawLabel("What should we call you?", app.width//2, app.height/3, bold=True, size=16)
     if app.playerName=="":
-        drawLabel("<Type your name!>",app.width//2,app.height/2)
+        drawLabel("<Type your name!>",app.width//2,app.height/2,size=20)
     else:
-        drawLabel(f'{app.playerName}',app.width//2,app.height/2)
+        drawLabel(f'{app.playerName}',app.width//2,app.height/2,size=20)
 def playerNameScreen_onKeyPress(app,key):
     if key=='backspace' and len(app.playerName)!=0:
         app.playerName = app.playerName[:-1]
@@ -81,7 +81,11 @@ def playerNameScreen_onKeyPress(app,key):
 def playerOccupationScreen_onScreenActivate(app):
     pass
 def playerOccupationScreen_redrawAll(app):
-    professionsOptions = ["Banker", "Carpenter", "Farmer","Learn More"]
+    drawLabel(f''' "{app.playerName}"? Well alright. I've no doubt you've led''',app.width//2,5,align="top",size=15)
+    drawLabel("an interesting life with a name like that. So then,",app.width//2,20,align="top",size=15)
+    drawLabel('''who were you before you set off on this journey?''',app.width//2,35,align="top",size=15,bold=True)
+    drawLabel('''<Press the corresponding option's number!>''',app.width//2,350,size=15)
+    professionsOptions = ["Banker", "Carpenter", "Farmer"]
     drawOptions(app,professionsOptions)
 def playerOccupationScreen_onKeyPress(app,key):
     professionsOptions = ["Banker", "Carpenter", "Farmer"]
@@ -107,16 +111,12 @@ def partyNamingScreen_redrawAll(app):
             drawLabel(f'{i+1}. <Type Stuff Here!>',10,yCoord,align='left',size=20,fill=color, bold=boldOrNot) #partially for debugging, but also for 
 def partyNamingScreen_onKeyPress(app,key):
     partyNames = [item.name for item in app.playerParty]
-    print("" in partyNames)
     if key.isdigit():
         newKey = int(key)-1
-        print(newKey)
         if newKey in range(1,len(partyNames)):
             app.selectedPM = newKey
     elif key in string.ascii_letters:
         if len(partyNames[app.selectedPM])<8:
-            print(app.selectedPM)
-            print(app.playerParty)
             currPM = app.playerParty[app.selectedPM]
             currPM.changeName(currPM.name+key)
     elif key=='backspace':
@@ -129,7 +129,6 @@ def partyNamingScreen_onKeyPress(app,key):
         if app.selectedPM>1:
             app.selectedPM-=1
     elif key=='enter' and ("" not in partyNames):
-        print("In here!")
         setActiveScreen("shop")
 
 #========================================================
@@ -138,40 +137,46 @@ def partyNamingScreen_onKeyPress(app,key):
 from shopScreenHelpers import *
 
 def shop_onScreenActivate(app):
-    app.shopButtons = []
-def shop_redrawAll(app):
-    #nts: food is 20 cents per pound so we're doing 1 buck per 5 pounds; similarly water is 1 per 2 L, ammo is 2 per 20 ammos, 
-    beginningPrices={'Oxen':30,'Wheels':10,'Tongues':10,'Axles':10, 'Ammo':2, 'Food':1,'Clothes':10,'Water':1}
+    beginningPrices = {'Oxen':30,'Wheels':10,'Tongues':10,'Axles':10, 'Food':1,'Water':1}
     if app.milesTraveled==0:
-        drawShop(app,"Jack's General Shop",beginningPrices)
+        app.currPriceDict = beginningPrices
+    else:
+        app.currPriceDict = generatePriceDict(beginningPrices)
+    app.currStoreButtons = generateStoreButtons(app)
+def shop_redrawAll(app):
+    if app.milesTraveled==0:
+        drawShop(app,"Jack's General Shop")
+    else:
+        drawShop(app, "General Shop")
     drawInv(app)
 def shop_onKeyPress(app,key):
     if key=="right" and app.milesTraveled==0:
         setActiveScreen("journeyStart")
+def shop_onMousePress(app,mouseX,mouseY):
+    for butt in app.currStoreButtons:
+        if butt.isIn(mouseX,mouseY):
+            butt.runFn()
 
 
 #========================================================
 #JOURNEY START SCREEN
 #========================================================
 def journeyStart_onScreenActivate(app):
-    app.pace = 9 #miles/day; is the "steady" and does not drain stamina unless food bad ?
+    app.pace = 9 #miles/day; is the "steady" and does not drain stamina
     app.foodRations = 3 #pounds/day, per person; water is 2 Liters/day per person
     app.days = 0 
     app.milesTraveled = 0
-    def sJourneyButtonPress(app):
-        setActiveScreen("choices")
-    app.startJourneyButton = button(app.width/2,app.height/2+30,100,50,sJourneyButtonPress,"Press to begin your Travels!","blue")
-    pass
+    app.startJourneyButton = button(app.width/2-50,app.height/2-20,100,50,setActiveScreen,"choices","Begin","blue")
 
 #FIX THIS
 def journeyStart_redrawAll(app):
     drawRect(0,0,app.width,app.height,fill="black")
-    drawLabel(f"And now, my good {app.playerName}, your journey begins...",app.width/2, app.height/2,fill="white")
+    drawLabel(f"And now, my good {app.playerName},your journey begins...",app.width/2, app.height/2-50,fill="white",size=20)
     app.startJourneyButton.draw()
 
 def journeyStart_onMousePress(app,mouseX,mouseY):
     if app.startJourneyButton.isIn(mouseX,mouseY):
-        app.startJourneyButton.runFn(app)
+        app.startJourneyButton.runFn()
 
 
 #========================================================
@@ -183,11 +188,12 @@ def choices_onScreenActivate(app):
     app.chosenOptions = None
 
 def choices_redrawAll(app):
+    drawLine(0,50,app.width,50,fill="black")
     drawRect(0,0,app.width,app.height,fill="lightGray")
-    if app.milesTraveled==0:
+    if app.milesTraveled==0 or (app.atLM==True):
         optionsList = ["Travel", "Check Map", "Check Party", "Change Pace", "Change Food Rations", "Rest", "Shop"]
     else:
-        optionsList = ["Continue Traveling","Check Map", "Check Party", "Change Pace", "Change Food Rations","Rest", "Hunt"]
+        optionsList = ["Continue Traveling","Check Map", "Check Party", "Change Pace", "Change Food Rations","Rest"]
     if app.chosenOptions==None:
         drawOptions(app,optionsList)
     else:
@@ -237,10 +243,14 @@ def travelScreen_onScreenActivate(app):
     app.man = "cmu://1166311/46639916/mysteryMan.png"
     app.manX = 360
     app.landmarks = [landmark("Fort Hall",0),landmark("Fort Boise",rounded(app.milesOfTrail*0.4)),landmark("Blue Mountains",rounded(app.milesOfTrail*0.65)),landmark("The Dalles",rounded(app.milesOfTrail*0.8))]
-    app.btmFromTravButton = button(75,360,115,35,returnToChoices,"Back to Options","burlyWood","saddleBrown",10)
-    app.travDayButton = button(210,360,115,35,returnToChoices,"Travel a Day","burlyWood","saddleBrown",10)
+    app.btmFromTravButton = button(75,360,115,35,setActiveScreen,"choices","Back to Options","burlyWood","saddleBrown",10)
+    app.travDayButton = button(210,360,115,35,setActiveScreen,"choices","Travel a Day","burlyWood","saddleBrown",10)
     app.travelButtons = [app.btmFromTravButton,app.travDayButton]
 
+def travelScreen_onMousePress(app,mouseX,mouseY):
+    for butt in app.travelButtons:
+        if butt.isIn(mouseX,mouseY):
+            butt.runFn()
 
 
 

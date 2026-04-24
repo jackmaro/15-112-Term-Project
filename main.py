@@ -9,7 +9,8 @@ def onAppStart(app):
     app.height=400
     app.milesTraveled = 0
     app.days = 0
-    app.milesOfTrail = 450
+    app.milesOfTrail = 220 #for brevity
+    app.atLM=False
     app.playerName = ""
     app.playerParty = []
     app.godmode = False

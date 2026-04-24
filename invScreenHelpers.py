@@ -8,7 +8,7 @@ def drawInv(app):
     drawLabel(f'${app.player.currency}.00',375,175,size=10)
     gridStart=50
     gridLength=350
-    itemsList = ["Oxen","Wheels","Tongues", "Axles","Food","Water","Clothes", "Ammo"]
+    itemsList = ["Oxen","Wheels","Tongues", "Axles","Food","Water"]
     for i in range(len(itemsList)):
          row, col = i//4, i%4
          cellLX, cellTY = 57.5+75*col,182.5+75*row

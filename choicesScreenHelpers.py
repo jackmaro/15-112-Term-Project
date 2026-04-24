@@ -5,7 +5,7 @@ from survivalHelpers import *
 
 def shop(app):
     app.chosen="shop"
-    setActiveScreen(shop)
+    setActiveScreen("shop")
 
 def hunt(app):
     pass

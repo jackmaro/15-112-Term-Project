@@ -7,7 +7,7 @@ from cmu_graphics import *
 
 #Note: This code is grounded in what Lauren coded in lecture on Tuesday April 21st.
 class button:
-    def __init__(self,leftX,topY,width,height,fn,label,color,border="black",textSize=16):
+    def __init__(self,leftX,topY,width,height,fn,fnParams,label,color,border="black",textSize=16):
         self.lX = leftX
         self.tY = topY
         self.width = width
@@ -15,6 +15,7 @@ class button:
         self.label = label
         self.color = color
         self.fn = fn
+        self.params = fnParams
         self.borderCol = border
         self.tSize = textSize
     
@@ -27,8 +28,11 @@ class button:
         rX,bY = self.lX+self.width, self.tY+self.height
         return (self.lX<=xCoord<=rX) and (self.tY<=yCoord<=bY)
         
-    def runFn(self,app):
-        self.fn(app)
+    def runFn(self):
+        if isinstance(self.params,list):
+            self.fn(*self.params)
+        else:
+            self.fn(self.params)
 
 
 #========================================================
