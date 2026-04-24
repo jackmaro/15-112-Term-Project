@@ -28,7 +28,7 @@ class person:
         self.conditions.append(condt)
     
     def removeCondition(self,condt):
-        self.conditions.pop(condt)
+        self.conditions.remove(condt)
     
     def ageUp(self):
         if self.age<4:
