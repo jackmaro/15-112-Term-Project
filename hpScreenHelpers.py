@@ -12,7 +12,7 @@ def drawHPStamBars(app):
 def drawHPStamCell(app,i):
     partyMemb = app.playerParty[i]
     boldOrNot = True if i==0 else False
-    percentHP, percentStam = partyMemb.health/getHPStamByAge(partyMemb.age),partyMemb.health/getHPStamByAge(partyMemb.age) 
+    percentHP, percentStam = partyMemb.health/getHPStamByAge(partyMemb.age),partyMemb.stamina/getHPStamByAge(partyMemb.age) 
     row, col = i//3, i%3
     cellLX, cellTY = 25+125*col,33+57*row
     drawLabel(f'{app.playerParty[i].name}',cellLX+2.5,cellTY+2.5,align="top-left",size=12,bold=boldOrNot,fill="gray")

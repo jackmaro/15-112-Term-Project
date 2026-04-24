@@ -56,9 +56,11 @@ def playerNameScreen_onScreenActivate(app):
     pass
 
 def playerNameScreen_redrawAll(app):
-    drawLabel("Hello Traveler,",app.width//2, app.height/8,size=30,align="right")
-    drawLabel("Today you embark on a gruesome journey from Fort Hall, Wyoming to Oregon City.", app.width//2,app.height/5,size=16)
-    drawLabel("What should we call you?", app.width//2, app.height/3, bold=True, size=16)
+    drawRect(0,0,app.width,app.height,fill="lightGray")
+    drawLabel("Hello Traveler,",app.width//2, app.height/8,size=15)
+    drawLabel("Today you embark on a gruesome journey",app.width//2,app.height/8+25,size=15)
+    drawLabel("from Fort Hall, Wyoming to Oregon City,Oregon.", app.width//2,app.height/8+50,size=15)
+    drawLabel("Say, what's your name?", app.width//2, app.height/8+75, bold=True, size=15)
     if app.playerName=="":
         drawLabel("<Type your name!>",app.width//2,app.height/2,size=20)
     else:
@@ -85,6 +87,7 @@ def playerNameScreen_onKeyPress(app,key):
 def playerOccupationScreen_onScreenActivate(app):
     pass
 def playerOccupationScreen_redrawAll(app):
+    drawRect(0,0,app.width,app.height,fill="lightGray")
     drawLabel(f''' "{app.playerName}"? Well alright. I've no doubt you've led''',app.width//2,5,align="top",size=15)
     drawLabel("an interesting life with a name like that. So then,",app.width//2,20,align="top",size=15)
     drawLabel('''who were you before you set off on this journey?''',app.width//2,35,align="top",size=15,bold=True)
@@ -103,6 +106,10 @@ def partyNamingScreen_onScreenActivate(app):
     generateParty(app)
     app.selectedPM = 1
 def partyNamingScreen_redrawAll(app):
+    drawRect(0,0,app.width,app.height,fill="lightGray")
+    drawLabel(f'''I see you have friends with you.''',app.width//2,5,align="top",size=15)
+    drawLabel("Who are they?",app.width//2,25,align="top",size=15)
+    drawLabel("<Use the up/down arrows or numbers to change friend!>",app.width//2,app.height-25,size=15)
     partyNames = [item.name for item in app.playerParty]
     screenLength = app.height-app.height/6
     for i in range(len(partyNames)):
@@ -150,12 +157,19 @@ def shop_onScreenActivate(app):
 def shop_redrawAll(app):
     if app.milesTraveled==0:
         drawShop(app,"Jack's General Shop")
+        if app.journeyStarted==False:
+            drawLabel("Take some of my wares for your journey.",app.width//2,350,size=15,align="top")
+            drawLabel("<Press the right arrow key to continue!>",app.width//2,375,size=15,align="top")
+        if app.journeyStarted==True:
+            drawLabel("<Press 'escape' to return to the menu!>",app.width//2,375,size=15,align="top")
     else:
         drawShop(app, "General Shop")
     drawInv(app)
 def shop_onKeyPress(app,key):
-    if key=="right" and app.milesTraveled==0:
+    if key=="right" and app.milesTraveled==0 and app.journeyStarted==False:
         setActiveScreen("journeyStart")
+    if key=="escape" and app.journeyStarted==True:
+        setActiveScreen("choices")
 def shop_onMousePress(app,mouseX,mouseY):
     for butt in app.currStoreButtons:
         if butt.isIn(mouseX,mouseY):
@@ -166,16 +180,17 @@ def shop_onMousePress(app,mouseX,mouseY):
 #JOURNEY START SCREEN
 #========================================================
 def journeyStart_onScreenActivate(app):
+    app.journeyStarted=True
     app.pace = 9 #miles/day; is the "steady" and does not drain stamina
     app.foodRations = 3 #pounds/day, per person; water is 2 Liters/day per person
     app.days = 0 
     app.milesTraveled = 0
     app.startJourneyButton = button(app.width/2-50,app.height/2-20,100,50,setActiveScreen,"choices","Begin","blue")
 
-#FIX THIS
 def journeyStart_redrawAll(app):
     drawRect(0,0,app.width,app.height,fill="black")
-    drawLabel(f"And now, my good {app.playerName},your journey begins...",app.width/2, app.height/2-50,fill="white",size=20)
+    drawLabel(f"And now, young {app.playerName}...",app.width/2, app.height/2-70,fill="white",size=20)
+    drawLabel("...your journey begins...", app.width/2, app.height/2-50,fill="white",size=20)
     app.startJourneyButton.draw()
 
 def journeyStart_onMousePress(app,mouseX,mouseY):
@@ -192,8 +207,9 @@ def choices_onScreenActivate(app):
     app.chosenOptions = None
 
 def choices_redrawAll(app):
-    drawLine(0,50,app.width,50,fill="black")
     drawRect(0,0,app.width,app.height,fill="lightGray")
+    drawLabel("Menu",app.width//2,25,size=20,bold=True)
+    drawLine(0,50,app.width,50,fill="black")
     if app.milesTraveled==0 or (app.atLM==True):
         optionsList = ["Travel", "Check Map", "Check Party", "Change Pace", "Change Food Rations", "Rest", "Shop"]
     else:
@@ -242,10 +258,12 @@ from travelScreenHelpers import *
 def travelScreen_redrawAll(app):
     drawTravelScreenTop(app)
     drawTravelScreenBottom(app)
+    if app.runningPopUps and len(app.puQueue)!=0:
+        app.puQueue[0].draw()
+    
 
 def travelScreen_onScreenActivate(app):
-    app.man = "cmu://1166311/46639916/mysteryMan.png"
-    app.manX = 360
+    app.runningPopUps = False
     app.landmarks = [landmark("Fort Hall",0),landmark("Fort Boise",rounded(app.milesOfTrail*0.4)),landmark("Blue Mountains",rounded(app.milesOfTrail*0.65)),landmark("The Dalles",rounded(app.milesOfTrail*0.8))]
     app.btmFromTravButton = button(75,360,115,35,setActiveScreen,"choices","Back to Options","burlyWood","saddleBrown",10)
     app.travDayButton = button(210,360,115,35,travButton,app,"Travel a Day","burlyWood","saddleBrown",10)
@@ -255,6 +273,9 @@ def travelScreen_onMousePress(app,mouseX,mouseY):
     for butt in app.travelButtons:
         if butt.isIn(mouseX,mouseY):
             butt.runFn()
+def travelScreen_onKeyPress(app,key):
+    if app.runningPopUps and key=='space':
+        app.puQueue.pop(0)
 
 
 
@@ -276,11 +297,14 @@ def mapScreen_onKeyPress(app,key):
 #========================================================
 #DEATH SCREEN
 #========================================================
-def deathScreen_redrawAll(app):
-    drawRect(0,0,app.width,app.height, fill="lightGray")
-    drawLabel(f"You have died of {app.deathReason}",app.width//2, app.height//2,fill="red",bold=True)
-    drawLabel(f'Press r to return to the start menu!', app.width//2, app.height//2+30, fill="black", bold=True)
+def deathScreen_onScreenActivate(app):
+    app.dsButton = button(app.width//2-50,app.height//2,100,50,setActiveScreen,"gameStartScreen","Try Again","white","black")
 
-def deathScreen_onKeyPress(app,key):
-    if key=="r":
-        setActiveScreen("gameStartScreen")
+def deathScreen_redrawAll(app):
+    drawRect(0,0,app.width,app.height, fill="gray")
+    drawLabel(f"You have died of {app.deathReason}",app.width//2, app.height//2-40,fill="red",bold=True)
+    app.dsButton.draw()
+
+def deathScreen_onMousePress(app,mouseX,mouseY):
+    if app.dsButton.isIn(mouseX,mouseY):
+        app.dsButton.runFn()

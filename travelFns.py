@@ -7,16 +7,31 @@ import math
 
 def dayPass(app,travelOrNot):
     if travelOrNot:
-        stamLoss = rounded(getTruePace(app)*0.5)
-        partyStatusChange(app,"stam",-stamLoss)
+        stamLoss = -1*rounded(getTruePace(app)*1.5)
+        print(stamLoss)
+        partyStatusChange(app,"stam",stamLoss)
         rollForBrokenPieces(app)
 
     foodConsumed = app.foodRations*len(app.playerParty)
     waterConsumed = len(app.playerParty)*2 #2 liters per day
     applyHumanFunctions(app,foodConsumed,waterConsumed)
+    #advanceConditions(app)
+    if len(app.puQueue) != 0:
+        app.runningPopUps = True
+        app.popUpInd = 0
     app.days+=1
 
-    
+
+def advanceConditions(app):
+    if app.days%7==0 and app.days!=0:
+        for folk in app.playerParty:
+            if len(folk.conditions)!=0:
+                for cond in folk.conditions:
+                    cond.progressCondt()
+            #cond.apply
+        
+
+
 def applyHumanFunctions(app,foodConsumed,waterConsumed):
     applyHumanPartyFunctions(app,foodConsumed,waterConsumed)
     applyByPMFunctions(app)
@@ -24,13 +39,19 @@ def applyHumanFunctions(app,foodConsumed,waterConsumed):
 
 
 def rollForBrokenPieces(app):
-    thresh = 3.5
+    thresh = 0.1
     if app.pace==15: thresh*=8
     elif app.pace==12: thresh*=4
     elif app.pace==9: thresh*=2
     rollRes = randrange(1,101)
     if rollRes<=thresh:
-        #pseudo code: break a piece. if in inventory, prob solved. if not, game over w
-        #death by no wagon
+        possPieces = ["Wheels","Tongues","Axles"]
+        pieceBroken = possPieces[randrange(0,3)]
+        if app.player.inventory[pieceBroken]<0:
+            app.playerDeathReason = "broken wagon"
+            #playerDeath(app)
+        else:
+            app.puQueue.append(popUp(f'''One of the {pieceBroken} broke! You fix it.'''))
+            app.player.alterInv(pieceBroken,-1)
         pass
 

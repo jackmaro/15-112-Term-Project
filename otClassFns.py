@@ -37,6 +37,10 @@ def generateParty(app):
 def partyStatusChange(app,hpOrStam,rateOfRegen):
     for folk in app.playerParty:
         folk.alterHPStam(hpOrStam,rateOfRegen)
+        print("----")
+        print(folk.name)
+        print(folk.health)
+        print(folk.stamina)
         if (rateOfRegen<0) and (folk.checkDeath()!=None): #short circuits if gaining health
             applyDeath(app,folk,folk.checkDeath())
 
@@ -44,7 +48,8 @@ def applyDeath(app,folk,reason):
     if folk==app.player:
         pass
     else:
-        pass
+        print(f"{folk} has died of {reason}!")
+        app.playerParty.remove(folk)
 
 
 
@@ -58,6 +63,8 @@ def getNearestLM(app):
     for lm in app.landmarks:
         if (lm.miles>app.milesTraveled) and ((currClosest.miles==None) or lm.miles<currClosest.miles):
                 currClosest = lm
-    print(currClosest.name,currClosest.miles)
     return currClosest
 
+#========================================================
+# Pop-Up Special Functions
+#========================================================

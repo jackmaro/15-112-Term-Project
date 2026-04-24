@@ -8,18 +8,10 @@ def drawTravelScreenTop(app):
     drawRect(0,0,app.width,150,fill="skyBlue")
     drawCircle(0,0,40,fill="yellow")
     drawRect(0,130,app.width,20,fill="green")
-    #drawImage(app.man,app.manX,50)
-
-#fix animate man later
-def animateMan(app):
-    app.manX-=10
-    if app.manX==-50:
-        app.manX=app.width+50
 
 def travButton(app):
     toBeTraveled = rounded(app.pace*(app.player.inventory["Oxen"]/4))
     closestLM = getNearestLM(app)
-    print(closestLM.miles <= toBeTraveled+app.milesTraveled)
     if (closestLM.miles <= toBeTraveled+app.milesTraveled) and (closestLM.name!="Oregon City"):
         app.milesTraveled=closestLM.miles
         app.atLM=True

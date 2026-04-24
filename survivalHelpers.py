@@ -4,7 +4,7 @@ from otClassFns import *
 
 
 def getTruePace(app):
-    return (app.player.inventory["Oxen"]//4)*app.pace
+    return rounded(app.player.inventory["Oxen"]/6)*app.pace
 
 def ageFolksUp(app):
     for folk in app.playerParty:
@@ -12,8 +12,10 @@ def ageFolksUp(app):
 
 def applyHumanPartyFunctions(app,foodConsumed,waterConsumed):
     if app.player.inventory["Food"]<foodConsumed:
+        foodDiff = foodConsumed-app.player.inventory["Food"]
+        hpLoss = -1*rounded(0.5*foodDiff)
         app.player.inventory["Food"]=0
-        partyStatusChange("hp",)
+        partyStatusChange("hp",hpLoss)
     else:
         app.player.alterInv("Food",-foodConsumed)
     #party drinks
@@ -67,5 +69,5 @@ def rollForBrokenBones(app,folk): #this is by person
     rollRes = randrange(1,101)
     if rollRes<=thresh:
         print("broken bone!")
-        bb =condition("Broken Bone","stam",1) #stage tbd
+        bb =condition("Broken Bone","stam",randrange(1,4)) #stage tbd
         folk.addCondition(bb)

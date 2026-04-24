@@ -34,7 +34,6 @@ def changeFood(app):
     app.chosenFns = [[setFoodRation,[app,4]],[setFoodRation,[app,2]],[setFoodRation,[app,1]]]
 
 def rest(app):
-    app.days+=1
-    stamRegenRate = max(30-getTruePace(app.pace),10)
+    stamRegenRate = max(30-getTruePace(app),10)
     partyStatusChange(app,"stam",stamRegenRate)
     dayPass(app,False)

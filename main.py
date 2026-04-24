@@ -13,8 +13,10 @@ def onAppStart(app):
     app.atLM=False
     app.playerName = ""
     app.playerParty = []
+    app.puQueue = []
     app.godmode = False
     app.hardMode = False
+    app.journeyStarted=False
     
 
 main()

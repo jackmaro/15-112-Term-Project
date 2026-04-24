@@ -85,9 +85,9 @@ class person:
 class player(person):
     def __init__(self,name,age):
         super().__init__(name,age)
-        player.inventory = {'Oxen':0,'Wheels':0,'Tongues':0,'Axles':0, 'Ammo':0, 'Food':0,'Clothes':0,'Water':0}
-        player.profession = None
-        player.currency = 0 
+        self.inventory = {'Oxen':0,'Wheels':0,'Tongues':0,'Axles':0, 'Ammo':0, 'Food':0,'Clothes':0,'Water':0}
+        self.profession = None
+        self.currency = 0 
     
     def alterCurrency(self,amount):
         newCurr = self.currency+amount
@@ -135,5 +135,19 @@ class condition:
         self.phase = 0
     def progressCondt(self):
         self.phase+=1
+    def afflict(self,bearer):
+        pass
+
     def __repr__(self):
         return self.condtName 
+    
+#========================================================
+#POP-UP CLASS
+#========================================================
+class popUp:
+    def __init__(self,msg):
+        self.msg = msg
+    def draw(self):
+        drawRect(50,50,300,100,fill="lightGray",border="black")
+        drawLabel(f'{self.msg}',200,65,size=15,align="top")
+        drawLabel("<Press 'space' to continue>", 200,115,size=15,align="top")
