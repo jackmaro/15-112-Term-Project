@@ -31,7 +31,7 @@ def gameStartScreen_onKeyPress(app, key):
         app.playerName="Meow"
         app.player = player(app.playerName,2)
         app.godmode=True
-        app.milesTraveled = 10
+        app.milesTraveled = 440
         app.atLM=False
         app.foodRations = 3
         app.pace=9
@@ -273,9 +273,11 @@ def travelScreen_onMousePress(app,mouseX,mouseY):
     for butt in app.travelButtons:
         if butt.isIn(mouseX,mouseY):
             butt.runFn()
+
 def travelScreen_onKeyPress(app,key):
     if app.runningPopUps and key=='space':
         app.puQueue.pop(0)
+        if len(app.puQueue)==0: app.runningPopUps=False
 
 
 
@@ -308,3 +310,19 @@ def deathScreen_redrawAll(app):
 def deathScreen_onMousePress(app,mouseX,mouseY):
     if app.dsButton.isIn(mouseX,mouseY):
         app.dsButton.runFn()
+
+#========================================================
+#WIN SCREEN
+#========================================================
+def winScreen_onScreenActivate(app):
+    app.winScreenButton = button(app.width//2-50,275,100,50,setActiveScreen,"gameStartScreen","Play Again!","white","black")
+    pass
+
+def winScreen_redrawAll(app):
+    drawRect(0,0,app.width,app.height,fill="lightGray")
+    drawLabel(f"Congratulations, {app.playerName}.",app.width//2,100,size=20,fill="yellow")
+    drawLabel("You have conquered the Oregon Trail!!",app.width//2,200, size=20,fill="yellow",bold=True)
+
+def winScreen_onMousePress(app,mouseX,mouseY):
+    if app.winScreenButton.isIn(mouseX,mouseY):
+        app.winScreenButton.runFn()

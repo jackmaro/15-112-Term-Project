@@ -34,22 +34,25 @@ def generateParty(app):
         #    age = randrange(5)
         #    app.playerParty.append(person("",age))
 
-def partyStatusChange(app,hpOrStam,rateOfRegen):
+def partyStatusChange(app,hpOrStam,rateOfRegen,reason=None):
     for folk in app.playerParty:
         folk.alterHPStam(hpOrStam,rateOfRegen)
-        print("----")
-        print(folk.name)
-        print(folk.health)
-        print(folk.stamina)
         if (rateOfRegen<0) and (folk.checkDeath()!=None): #short circuits if gaining health
-            applyDeath(app,folk,folk.checkDeath())
+            if reason!=None:
+                applyDeath(app,folk,reason)
+            else:
+                applyDeath(app,folk,folk.checkDeath())
 
 def applyDeath(app,folk,reason):
     if folk==app.player:
-        pass
+        playerDeath(app,reason)
     else:
-        print(f"{folk} has died of {reason}!")
+        app.puQueue=popUp(f'''{folk} has died of {reason} :( ''')
         app.playerParty.remove(folk)
+
+def playerDeath(app,reason):
+    app.deathReason = reason
+    setActiveScreen("deathScreen")
 
 
 

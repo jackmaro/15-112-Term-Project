@@ -15,8 +15,10 @@ def applyHumanPartyFunctions(app,foodConsumed,waterConsumed):
         foodDiff = foodConsumed-app.player.inventory["Food"]
         hpLoss = -1*rounded(0.5*foodDiff)
         app.player.inventory["Food"]=0
-        partyStatusChange("hp",hpLoss)
+        partyStatusChange(app,"hp",hpLoss)
     else:
+        hpGain = app.foodRations*4
+        partyStatusChange(app,"hp",hpGain)
         app.player.alterInv("Food",-foodConsumed)
     #party drinks
     if app.player.inventory["Water"]<waterConsumed:
@@ -27,7 +29,7 @@ def applyHumanPartyFunctions(app,foodConsumed,waterConsumed):
         app.player.alterInv("Water",-waterConsumed)
     #age up
     if app.days%25==0 and app.days!=0:
-        print("Happy Birthday!")
+        app.puQueue.append("Happy Birthday! (Your party aged up)")
         for pm in app.playerParty:
             pm.ageUp()
             if pm.health>getHPStamByAge(pm.age):
@@ -44,16 +46,16 @@ def applyByPMFunctions(app):
 
 #DISEASES AND CONDITIONS AND SUCH    
 
-def rollForWaterDiseases(litersNeeded): #this is applied randomly to someone in the party
+def rollForWaterDiseases(app, litersNeeded): #this is applied randomly to someone in the party
     dysentaryThreshold = 2.5*litersNeeded
     choleraThreshold = 2*litersNeeded
     rollRes = randrange(1,101)
     if rollRes<=dysentaryThreshold:
-        print("Dysentary!")
-        pass
+        app.puQueue.append("Your party has dysentery. Wuh-Oh.")
+        partyStatusChange(app,"hp",-125,"dysentery")
     if rollRes<=choleraThreshold:
-        print("Cholera!")
-        pass
+        app.puQueue.append("Your party has cholera. Choler-me stoked!")
+        partyStatusChange(app,"hp",-100,"cholera")
 
 def rollForBrokenBones(app,folk): #this is by person
     thresh = 3
@@ -68,6 +70,7 @@ def rollForBrokenBones(app,folk): #this is by person
     elif folk.age==4: thresh*=4
     rollRes = randrange(1,101)
     if rollRes<=thresh:
-        print("broken bone!")
-        bb =condition("Broken Bone","stam",randrange(1,4)) #stage tbd
-        folk.addCondition(bb)
+        app.puQueue.append(popUp(f"{folk} has a broken bone!"))
+        randrange(1,4)
+        hpLoss = -0.1*randrange(1,4)*folk.health
+        folk.alterHPStam("hp",hpLoss)

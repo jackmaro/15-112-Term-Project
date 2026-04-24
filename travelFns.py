@@ -15,21 +15,9 @@ def dayPass(app,travelOrNot):
     foodConsumed = app.foodRations*len(app.playerParty)
     waterConsumed = len(app.playerParty)*2 #2 liters per day
     applyHumanFunctions(app,foodConsumed,waterConsumed)
-    #advanceConditions(app)
     if len(app.puQueue) != 0:
         app.runningPopUps = True
-        app.popUpInd = 0
-    app.days+=1
-
-
-def advanceConditions(app):
-    if app.days%7==0 and app.days!=0:
-        for folk in app.playerParty:
-            if len(folk.conditions)!=0:
-                for cond in folk.conditions:
-                    cond.progressCondt()
-            #cond.apply
-        
+    app.days+=1        
 
 
 def applyHumanFunctions(app,foodConsumed,waterConsumed):
@@ -39,7 +27,7 @@ def applyHumanFunctions(app,foodConsumed,waterConsumed):
 
 
 def rollForBrokenPieces(app):
-    thresh = 0.1
+    thresh = 2
     if app.pace==15: thresh*=8
     elif app.pace==12: thresh*=4
     elif app.pace==9: thresh*=2
@@ -48,10 +36,8 @@ def rollForBrokenPieces(app):
         possPieces = ["Wheels","Tongues","Axles"]
         pieceBroken = possPieces[randrange(0,3)]
         if app.player.inventory[pieceBroken]<0:
-            app.playerDeathReason = "broken wagon"
-            #playerDeath(app)
+            playerDeath(app,"broken wagon")
         else:
             app.puQueue.append(popUp(f'''One of the {pieceBroken} broke! You fix it.'''))
             app.player.alterInv(pieceBroken,-1)
         pass
-

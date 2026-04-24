@@ -15,6 +15,8 @@ def travButton(app):
     if (closestLM.miles <= toBeTraveled+app.milesTraveled) and (closestLM.name!="Oregon City"):
         app.milesTraveled=closestLM.miles
         app.atLM=True
+    elif (closestLM.miles <= toBeTraveled+app.milesTraveled):
+        setActiveScreen("winScreen")
     else:
         app.atLM=False
         app.milesTraveled+=toBeTraveled
