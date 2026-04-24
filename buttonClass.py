@@ -2,7 +2,7 @@ from cmu_graphics import *
 
 #This code is grounded in what Lauren coded in lecture on Tuesday April 21st.
 class button:
-    def __init__(self,cX,cY,width,height,fn,label,color):
+    def __init__(self,cX,cY,width,height,fn,label,color,border="black",textSize=16):
         self.cX = cX
         self.cY = cY
         self.width = width
@@ -10,10 +10,12 @@ class button:
         self.label = label
         self.color = color
         self.fn = fn
+        self.borderCol = border
+        self.tSize = textSize
     
     def draw(self):
-        drawRect(self.cX, self.cY, self.width, self.height,fill=self.color,border="black",align="center")
-        drawLabel(self.label, self.cX,self.cY,bold=True,size=16)
+        drawRect(self.cX, self.cY, self.width, self.height,fill=self.color,border=self.borderCol,align="center")
+        drawLabel(self.label, self.cX,self.cY,bold=True,size=self.tSize)
     
     def isIn(self,xCoord,yCoord):
         lX,rX= self.cX-self.width//2, self.cX+self.width//2

@@ -5,7 +5,11 @@ from choicesFunctions import *
 from learn import *
 from personAndPlayer import *
 from travelFns import *
+from travelScreenHelpers import *
 import string
+
+def returnToChoices(app):
+    setActiveScreen("choices")
 
 #CODE FOR START SCREEN
 def ontoNameScreen(app):
@@ -39,7 +43,7 @@ def gameStartScreen_onKeyPress(app, key):
         app.player.alterInv("Axles",3)
         app.player.alterInv("Ammo",5000)
         app.player.alterInv("Food",5000)
-        setActiveScreen("choices") #can change as desired for debugging
+        setActiveScreen("travelScreen") #can change as desired for debugging
 
 
 
@@ -242,7 +246,20 @@ def hpAndInvScreen_onKeyPress(app,key):
 
 
 def travelScreen_redrawAll(app):
-    pass
+    drawTravelScreenTop(app)
+    drawTravelScreenBottom(app)
+
+def travelScreen_onScreenActivate(app):
+    app.man = "cmu://1166311/46639916/mysteryMan.png"
+    app.manX = 360
+    app.landmarks = [landmark("Fort Hall",0),landmark("Fort Boise",rounded(app.milesOfTrail*0.4)),landmark("Blue Mountains",rounded(app.milesOfTrail*0.65)),landmark("The Dalles",rounded(app.milesOfTrail*0.8))]
+    app.btmFromTravButton = button(75,360,115,35,returnToChoices,"Back to Options","burlyWood","saddleBrown",10)
+    app.travDayButton = button(210,360,115,35,returnToChoices,"Travel a Day","burlyWood","saddleBrown",10)
+    app.travelButtons = [app.btmFromTravButton,app.travDayButton]
+
+
+
+
 
 #CODE FOR MAP SCREEN
 def mapScreen_onScreenActivate(app):
